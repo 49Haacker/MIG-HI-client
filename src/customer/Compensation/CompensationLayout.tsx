@@ -40,14 +40,18 @@ const CompensationLayout = () => {
               handleTabClick("/compensation/reimbursement-history")
             }
             className={`${
-              activeTab === "/compensation/reimbursement-history"
+              activeTab === "/compensation/reimbursement-history" ||
+              activeTab === "/compensation/reimbursement-details"
                 ? "bg-[#FFFFFF]"
                 : "bg-[#F9F9F9]"
             } hover:bg-[#FFFFFF] rounded-t-2xl p-3 min-w-max lg:min-w-0`}
           >
             <h4 className="text-[16px] leading-[16px] text-[#424B5A] font-medium">
-              Нөхөн төлбөрийн түүх
               {/* Reimbursement history */}
+              {location.pathname === "/compensation/reimbursement-history"
+                ? "Нөхөн төлбөрийн түүх"
+                : "Нөхөн төлбөрийн дэлгэрэнгүй"}
+              {/* Reimbursement details */}
             </h4>
           </Link>
         </div>

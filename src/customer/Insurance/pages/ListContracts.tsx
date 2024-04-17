@@ -139,7 +139,9 @@ const ListContracts = () => {
             {filteredData.map((insurance, index) => (
               <div
                 key={index}
-                className="grid grid-cols-11 items-center justify-start px-3 py-2 w-full h-[52px] hover:bg-[#F3F7F9] hover:rounded-md cursor-pointer"
+                className={`grid grid-cols-11 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
+                  insurance.status === "Идэвхигүй" && "bg-[#F3F7F9]"
+                }`}
               >
                 <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] col-span-2">
                   {insurance.product_name}

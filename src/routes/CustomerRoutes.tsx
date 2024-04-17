@@ -11,6 +11,7 @@ import { ContractDetails, ListContracts } from "@/customer/Insurance/pages";
 import CompensationLayout from "@/customer/Compensation/CompensationLayout";
 import {
   CompensationMaterials,
+  ReimbursementDetails,
   ReimbursementHistory,
 } from "@/customer/Compensation/pages";
 
@@ -44,10 +45,13 @@ const routes = () => {
               path="compensation-materials"
               element={<CompensationMaterials />}
             />
-
             <Route
               path="reimbursement-history"
               element={<ReimbursementHistory />}
+            />
+            <Route
+              path="reimbursement-details"
+              element={<ReimbursementDetails />}
             />
           </Route>
 
