@@ -9,26 +9,26 @@ const TopNavbarSmall = () => {
     {
       path: "/employee/employee-registration",
       text: "Admin",
-      image: "/assets/sidenavbar/sideEmployee.svg",
-      focusImage: "/assets/sidenavbar/sideEmployeeLight.svg",
+      image: "/assets/customer/sidenavbar/sideEmployee.svg",
+      focusImage: "/assets/customer/sidenavbar/sideEmployeeLight.svg",
     },
     {
       path: "/insurance-contract/registration-contracts",
       text: "Contact",
-      image: "/assets/sidenavbar/sideInsuContract.svg",
-      focusImage: "/assets/sidenavbar/sideInsuContractLight.svg",
+      image: "/assets/customer/sidenavbar/sideInsuContract.svg",
+      focusImage: "/assets/customer/sidenavbar/sideInsuContractLight.svg",
     },
     {
       path: "/compensation/compensation-materials",
       text: "Claim",
-      image: "/assets/sidenavbar/sideCompensation.svg",
-      focusImage: "/assets/sidenavbar/sideCompensationLight.svg",
+      image: "/assets/customer/sidenavbar/sideCompensation.svg",
+      focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",
     },
     {
       path: "/",
       text: "Exit",
-      image: "/assets/sidenavbar/sideNavLogOut.svg",
-      focusImage: "/assets/sidenavbar/sideCompensationLight.svg",
+      image: "/assets/customer/sidenavbar/sideNavLogOut.svg",
+      focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",
     },
   ];
 
@@ -45,13 +45,13 @@ const TopNavbarSmall = () => {
         <div className="w-full h-[96px] bg-[#005F7E] flex items-center justify-between px-6">
           <div className="flex items-center">
             <img
-              src="/assets/user/smallTopNavMigLogo.svg"
+              src="/assets/customer/user/smallTopNavMigLogo.svg"
               alt="smallTopNavMigLogo"
             />
           </div>
           <div className="flex items-center gap-2">
             <img
-              src="/assets/user/topUserSmall.svg"
+              src="/assets/customer/user/topUserSmall.svg"
               alt="topNavBarUser"
               className="w-[26.67px] h-[26.67px]"
             />

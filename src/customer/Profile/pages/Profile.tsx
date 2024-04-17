@@ -201,7 +201,7 @@ const Profile = () => {
                 >
                   <label htmlFor="photoId" className="cursor-pointer">
                     <img
-                      src="/assets/employee/uploadIcon.svg"
+                      src="/assets/customer/employee/uploadIcon.svg"
                       alt="uploadIcon"
                       className="absolute inset-0 m-auto"
                     />
@@ -231,7 +231,7 @@ const Profile = () => {
                 >
                   <label htmlFor="drivingLicense" className="cursor-pointer">
                     <img
-                      src="/assets/employee/uploadIcon.svg"
+                      src="/assets/customer/employee/uploadIcon.svg"
                       alt="uploadIcon"
                       className="absolute inset-0 m-auto"
                     />
@@ -264,7 +264,7 @@ const Profile = () => {
                     className="cursor-pointer"
                   >
                     <img
-                      src="/assets/employee/uploadIcon.svg"
+                      src="/assets/customer/employee/uploadIcon.svg"
                       alt="uploadIcon"
                       className="absolute inset-0 m-auto"
                     />
