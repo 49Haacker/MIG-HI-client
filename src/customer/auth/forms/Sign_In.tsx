@@ -1,10 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Sign_In = () => {
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+
+  const handleSignin = () => {
+    if (phoneNumber === "9999999999") {
+      navigate("/admin/verify-otp");
+    } else {
+      navigate("/verify-otp");
+    }
+  };
 
   return (
     <>
@@ -21,6 +31,8 @@ const Sign_In = () => {
               Утасны дугаар
             </Label>
             <Input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="+(976) 0000-0000"
               className="placeholder:text-[#B3CFD8] text-[#424B5A] font-normal text-[14px] leading-[17.36px]"
             />
@@ -28,7 +40,7 @@ const Sign_In = () => {
 
           <div className="flex items-center w-full mt-4">
             <Button
-              onClick={() => navigate("/verify-otp")}
+              onClick={handleSignin}
               className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#006F8F] font-bold text-[16px] leading-[20.03px] w-full text-center"
             >
               Нэвтрэх

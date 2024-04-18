@@ -8,10 +8,12 @@ import CustomerRegStepSecond from "./CustomerRegStepSecond";
 import { useState } from "react";
 
 const CustomerRegistration = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [selectedOption, setSelectedOption] =
+    useState<string>("Гараар бүртгэх");
 
-  const handleNextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
+  const handleRadioChange = (value: string) => {
+    setSelectedOption(value);
+    // console.log("selected valeu = ", value);
   };
 
   return (
@@ -22,9 +24,9 @@ const CustomerRegistration = () => {
             <RadioGroup defaultValue="Гараар бүртгэх" className="flex gap-2">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem
-                  value="Гараар бүртгэх"
                   id="r1"
-                  checked={currentStep === 1}
+                  value="Гараар бүртгэх"
+                  onClick={() => handleRadioChange("Гараар бүртгэх")}
                 />
                 <Label htmlFor="r1" className="cursor-pointer">
                   Гараар бүртгэх
@@ -34,9 +36,9 @@ const CustomerRegistration = () => {
 
               <div className="flex items-center space-x-2">
                 <RadioGroupItem
-                  value="Excel-ээр бүртгэх"
                   id="r2"
-                  checked={currentStep === 2}
+                  value="Excel-ээр бүртгэх"
+                  onClick={() => handleRadioChange("Excel-ээр бүртгэх")}
                 />
                 <Label htmlFor="r2" className="cursor-pointer">
                   Excel-ээр бүртгэх
@@ -47,13 +49,15 @@ const CustomerRegistration = () => {
           </div>
 
           <div className="flex w-full">
-            {currentStep === 1 && <CustomerRegStepFirst />}
-            {currentStep === 2 && <CustomerRegStepSecond />}
+            {selectedOption === "Гараар бүртгэх" && <CustomerRegStepFirst />}
+            {selectedOption === "Excel-ээр бүртгэх" && (
+              <CustomerRegStepSecond />
+            )}
           </div>
         </div>
 
         {/* Add button */}
-        <div onClick={handleNextStep} className="w-full flex justify-end">
+        <div className="w-full flex justify-end">
           <Button
             type="submit"
             className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"

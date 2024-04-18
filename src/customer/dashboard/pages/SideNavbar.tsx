@@ -34,8 +34,22 @@ const SideNavbar = () => {
   useEffect(() => {
     const currentPath = location.pathname;
 
-    const activeIndex = links.findIndex((link) => link.path === currentPath);
-    setActiveLink(activeIndex);
+    const startingPaths = [
+      "/insurance-contract",
+      "/compensation",
+      "/customer-profile",
+    ];
+
+    for (let i = 0; i < startingPaths.length; i++) {
+      if (currentPath.startsWith(startingPaths[i])) {
+        setActiveLink(i);
+        return;
+      }
+    }
+
+    // const activeIndex = links.findIndex((link) => link.path === currentPath);
+    // setActiveLink(activeIndex);
+    setActiveLink(null);
   }, [location.pathname]);
 
   return (
