@@ -17,10 +17,10 @@ const ProfileLayout = () => {
         <div className="w-full flex items-center gap-2">
           {/* Profile */}
           <Link
-            to={"/customer-profile/profile"}
-            onClick={() => handleTabClick("/customer-profile/profile")}
+            to={"/admin/customer-profile/profile"}
+            onClick={() => handleTabClick("/admin/customer-profile/profile")}
             className={`${
-              activeTab === "/customer-profile/profile"
+              activeTab === "/admin/customer-profile/profile"
                 ? "bg-[#FFFFFF]"
                 : "bg-[#F9F9F9]"
             } hover:bg-[#FFFFFF] rounded-t-2xl p-3`}
