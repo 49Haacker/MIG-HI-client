@@ -1,6 +1,7 @@
 import { BrowserRouter, useLocation } from "react-router-dom";
 import CustomerRouter from "./routes/CustomerRoutes";
 import { useEffect } from "react";
+import AdminRoutes from "./routes/AdminRoutes";
 
 const TitleUpdater = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const App = () => {
         <ScrollToTop />
         <TitleUpdater />
         <CustomerRouter />
+        <AdminRoutes />
       </BrowserRouter>
     </>
   );
