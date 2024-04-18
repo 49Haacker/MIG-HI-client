@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import CancelContract from "@/customer/model/CancelContract";
 
 const ContractDetails = () => {
   return (
@@ -105,9 +106,11 @@ const ContractDetails = () => {
         </div>
 
         <div className="w-full">
-          <Button className="bg-background hover:bg-background text-[#FF5C5E] font-bold text-[18px] leading-[23.18px] border border-[#FF5C5E] rounded-full mb-4">
+          {/* <Button className="bg-background hover:bg-background text-[#FF5C5E] font-bold text-[18px] leading-[23.18px] border border-[#FF5C5E] rounded-full mb-4">
             Гэрээ цуцлах
-          </Button>
+          </Button> */}
+
+          <CancelContract />
         </div>
       </div>
     </>

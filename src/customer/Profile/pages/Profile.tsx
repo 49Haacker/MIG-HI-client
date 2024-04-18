@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ProfileSaveData from "@/customer/model/ProfileSaveData";
 
 const Profile = () => {
   return (
@@ -195,9 +196,15 @@ const Profile = () => {
           </div>
 
           <div className="flex justify-end w-full">
-            <Button className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]">
+            {/* <Button
+              onClick={openModal}
+              className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
+            >
               Хадгалах
             </Button>
+            Save */}
+
+            <ProfileSaveData />
           </div>
         </div>
       </div>
