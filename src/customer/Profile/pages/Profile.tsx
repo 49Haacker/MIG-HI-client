@@ -7,7 +7,7 @@ const Profile = () => {
   return (
     <>
       <div className="w-full flex flex-col gap-4">
-        <div className="flex items-start gap-8 w-full">
+        <div className="flex flex-col sm:flex-row items-start gap-8 w-full">
           <div className="flex flex-col w-full">
             {/* This */}
             <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
@@ -63,8 +63,8 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="flex flex-col mt-12">
-          <div className="flex gap-4">
+        <div className="flex flex-col gap-4 mt-12">
+          <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-2">
               {/* Identity card (front side) */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
@@ -150,7 +150,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-2">
               {/* Vehicle certificate */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">

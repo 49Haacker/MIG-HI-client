@@ -18,7 +18,7 @@ const CustomerRegistration = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-between w-full">
+      <div className="flex flex-col gap-4 justify-between w-full">
         <div className="flex flex-col w-full">
           <div className="flex">
             <RadioGroup defaultValue="Гараар бүртгэх" className="flex gap-2">

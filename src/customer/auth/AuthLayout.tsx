@@ -22,7 +22,7 @@ const AuthLayout = () => {
 
   const bgImage = {
     backgroundImage:
-      "linear-gradient(rgba(0, 95, 126, 0.5), rgba(0, 95, 126, 0.5)), url(/assets/signInAndUp/signInimg.png)",
+      "linear-gradient(rgba(0, 95, 126, 0.5), rgba(0, 95, 126, 0.5)), url(/assets/customer/signInAndUp/signInimg.png)",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",

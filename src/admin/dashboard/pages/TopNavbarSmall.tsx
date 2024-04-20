@@ -6,24 +6,38 @@ const TopNavbarSmall = () => {
   const location = useLocation();
 
   const links = [
+    // Registration
     {
-      path: "/employee/employee-registration",
-      text: "Admin",
-      image: "/assets/customer/sidenavbar/sideEmployee.svg",
-      focusImage: "/assets/customer/sidenavbar/sideEmployeeLight.svg",
+      path: "/admin/registration/customer-registration",
+      text: "Бүртгэл",
+      image: "/assets/admin/sidenavbar/sideRegistration.svg",
+      focusImage: "/assets/admin/sidenavbar/sideRegistrationLight.svg",
     },
+
+    // Insurance contract
     {
-      path: "/insurance-contract/registration-contracts",
-      text: "Contact",
+      path: "/admin/insurance-contract/list-contracts",
+      text: "Даатгалын гэрээ",
       image: "/assets/customer/sidenavbar/sideInsuContract.svg",
       focusImage: "/assets/customer/sidenavbar/sideInsuContractLight.svg",
     },
+
+    // Compensation
     {
-      path: "/compensation/compensation-materials",
-      text: "Claim",
+      path: "/admin/compensation/compensation-list",
+      text: "Нөхөн төлбөр",
       image: "/assets/customer/sidenavbar/sideCompensation.svg",
       focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",
     },
+
+    // Profile
+    {
+      path: "/admin/customer-profile/profile",
+      text: "Профайл",
+      image: "/assets/customer/sidenavbar/sideProfile.svg",
+      focusImage: "/assets/customer/sidenavbar/sideProfileLight.svg",
+    },
+
     {
       path: "/",
       text: "Exit",
@@ -35,8 +49,24 @@ const TopNavbarSmall = () => {
   useEffect(() => {
     const currentPath = location.pathname;
 
-    const activeIndex = links.findIndex((link) => link.path === currentPath);
-    setActiveLink(activeIndex);
+    const startingPaths = [
+      "/admin/registration",
+      "/admin/insurance-contract",
+      "/admin/compensation",
+      "/admin/customer-profile",
+    ];
+
+    for (let i = 0; i < startingPaths.length; i++) {
+      if (currentPath.startsWith(startingPaths[i])) {
+        setActiveLink(i);
+        return;
+      }
+    }
+
+    // const activeIndex = links.findIndex((link) => link.path === currentPath);
+    // setActiveLink(activeIndex);
+
+    setActiveLink(null);
   }, [location.pathname]);
 
   return (
@@ -59,14 +89,15 @@ const TopNavbarSmall = () => {
           </div>
         </div>
 
-        <div className="w-full flex gap-1 items-center mb-8 bg-white">
+        <div className="w-full flex gap-1 items-center mb-8 bg-white overflow-x-scroll whitespace-nowrap">
           {links.map((link, index) => (
             <Link
               key={index}
               to={link.path}
-              className={`flex flex-col items-center gap-2 w-full h-[cal(76px)] ${
+              className={`flex flex-col items-center gap-2 w-full ${
                 activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
               }`}
+              style={{ height: "calc(100% - 0px)", width: "calc(100% - 0px)" }}
             >
               <img
                 src={activeLink === index ? link.focusImage : link.image}

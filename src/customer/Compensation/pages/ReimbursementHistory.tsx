@@ -67,7 +67,7 @@ const ReimbursementHistory = () => {
       ) : (
         <div className="flex flex-col w-full overflow-x-scroll lg:overflow-hidden">
           <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
-            <div className="grid grid-cols-11 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
+            <div className="grid grid-cols-8 sm:grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
               {/* Product name */}
               <div className="flex flex-col gap-2 w-auto col-span-2">
                 <label
@@ -155,7 +155,7 @@ const ReimbursementHistory = () => {
               {filteredData.map((reimbursement, index) => (
                 <div
                   key={index}
-                  className={`grid grid-cols-11 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
+                  className={`grid grid-cols-8 sm:grid-cols-8 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
                     (reimbursement.status === "Хянаж байгаа" ||
                       reimbursement.status === "Төлөгдсөн") &&
                     "bg-[#F3F7F9]"
@@ -174,7 +174,7 @@ const ReimbursementHistory = () => {
                     {reimbursement.amount}
                   </span>
 
-                  <div className=" w-full col-span-2">
+                  <div className=" w-full min-[1024px]:col-span-2">
                     <Button
                       className={`rounded-full h-[24px] ${
                         reimbursement.status === "Хүлээн авсан"

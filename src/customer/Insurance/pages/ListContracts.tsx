@@ -51,7 +51,7 @@ const ListContracts = () => {
     <>
       <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
-          <div className="grid grid-cols-11 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
+          <div className="grid grid-cols-8 sm:grid-cols-7 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
             {/* Product name */}
             <div className="flex flex-col gap-2 w-auto col-span-2">
               <label
@@ -139,7 +139,7 @@ const ListContracts = () => {
             {filteredData.map((insurance, index) => (
               <div
                 key={index}
-                className={`grid grid-cols-11 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
+                className={`grid grid-cols-8 sm:grid-cols-7 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
                   insurance.status === "Идэвхигүй" && "bg-[#F3F7F9]"
                 }`}
               >

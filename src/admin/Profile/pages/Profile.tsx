@@ -7,7 +7,7 @@ const Profile = () => {
     <>
       <div className="w-full flex flex-col justify-between gap-4">
         <div className="flex flex-col gap-8 w-full">
-          <div className="flex items-start gap-8 w-full">
+          <div className="flex flex-col sm:flex-row items-start gap-8 w-full">
             <div className="flex flex-col w-full gap-2">
               {/* This */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">

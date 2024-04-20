@@ -42,6 +42,7 @@ const CustomerRegStepSecond = () => {
                 onChange={handleFileChange}
               />
             </label>
+
             <span className="text-xs text-[#005F7E] absolute bottom-4">
               Хуулах
             </span>

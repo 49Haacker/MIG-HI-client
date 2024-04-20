@@ -51,7 +51,7 @@ const List = () => {
     <>
       <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
-          <div className="grid grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
+          <div className="grid grid-cols-6 max-[1023px]:grid-cols-9 min-[1224px]:grid-cols-7 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
             {/* This one */}
             <div className="flex flex-col gap-2 w-auto">
               <label
@@ -139,7 +139,7 @@ const List = () => {
             {filteredData.map((list, index) => (
               <div
                 key={index}
-                className={`grid grid-cols-8 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
+                className={`grid grid-cols-6 max-[1023px]:grid-cols-9 min-[1224px]:grid-cols-7 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
                   list.user_type === "Менежер" && "bg-[#F3F7F9]"
                 }`}
               >

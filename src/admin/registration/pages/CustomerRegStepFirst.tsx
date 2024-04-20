@@ -38,7 +38,7 @@ const CustomerRegStepFirst = () => {
     <>
       <div className="flex flex-col w-full">
         <div className="flex flex-col w-full">
-          <div className="flex gap-4 w-full mt-8">
+          <div className="flex flex-col sm:flex-row gap-4 w-full mt-8">
             <div className="flex flex-col gap-2 w-full">
               <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
                 Овог
@@ -78,7 +78,7 @@ const CustomerRegStepFirst = () => {
               Регистрийн дугаар
             </Label>
 
-            <div className="flex gap-8 w-full">
+            <div className="flex flex-col sm:flex-row gap-8 w-full">
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

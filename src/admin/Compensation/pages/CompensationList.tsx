@@ -63,7 +63,7 @@ const CompensationList = () => {
       ) : (
         <div className="flex flex-col w-full overflow-x-scroll lg:overflow-hidden">
           <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
-            <div className="grid grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
+            <div className="grid grid-cols-7 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
               {/* This one */}
               <div className="flex flex-col gap-2 w-auto">
                 <label
@@ -163,7 +163,7 @@ const CompensationList = () => {
               {filteredData.map((items, index) => (
                 <div
                   key={index}
-                  className={`grid grid-cols-8 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
+                  className={`grid grid-cols-7 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer whitespace-nowrap ${
                     (items.status === "Хянаж байгаа" ||
                       items.status === "Төлөгдсөн") &&
                     "bg-[#F3F7F9]"

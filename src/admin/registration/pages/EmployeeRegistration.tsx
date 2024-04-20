@@ -12,9 +12,9 @@ import { Label } from "@/components/ui/label";
 const EmployeeRegistration = () => {
   return (
     <>
-      <div className="flex flex-col items-start justify-between w-full">
+      <div className="flex flex-col gap-4 items-start justify-between w-full">
         <div className="flex flex-col items-start w-full">
-          <div className="flex gap-4 w-full">
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
               <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
                 Овог
@@ -112,7 +112,7 @@ const EmployeeRegistration = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 w-[33%] mt-4">
+          <div className="flex flex-col gap-2 w-full sm:w-[33%] mt-4">
             <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
               Утасны дугаар
             </Label>
