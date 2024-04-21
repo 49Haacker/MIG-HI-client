@@ -1,3 +1,4 @@
+import axios from "@/axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -62,6 +63,16 @@ const SideNavbar = () => {
     setActiveLink(null);
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    try {
+      await axios.post("logout");
+
+      localStorage.removeItem("token");
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   return (
     <>
       <div className="h-screen bg-[#005F7E] w-[268px] px-4 py-8 flex flex-col justify-between">
@@ -101,7 +112,11 @@ const SideNavbar = () => {
 
         {/* logout section */}
         <div className="">
-          <Link to={"/"} className="flex items-center gap-2">
+          <Link
+            to={"/admin"}
+            className="flex items-center gap-2"
+            onClick={handleLogout}
+          >
             <img
               src="/assets/customer/sidenavbar/sideNavLogOut.svg"
               alt="sideNavLogOut"

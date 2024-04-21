@@ -2,17 +2,53 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChangeEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "@/axios";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState<string>("");
+
+  const location = useLocation();
+  const phoneNumber = location.state.phoneNumber;
+
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input: string = e.target.value;
     const sanitizedInput: string = input.replace(/\D/g, "");
     const limitedInput: string = sanitizedInput.slice(0, 6);
     setCode(limitedInput);
+  };
+
+  const handleVeifyOtp = async () => {
+    if (!code) {
+      setError("Please enter the OTP.");
+
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
+
+    try {
+      const response = await axios.post("otp-verify", {
+        phoneNo: phoneNumber,
+        otp: code,
+      });
+
+      // console.log("otp respone", response);
+
+      if (response.data.statusCode === 200) {
+        localStorage.setItem("token", response.data.token);
+
+        navigate("/admin/registration/customer-registration");
+      } else {
+        console.error("OTP verification failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -40,6 +76,7 @@ const VerifyOtp = () => {
             value={code}
             onChange={handleChange}
           />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
 
         {/* Redeem the code */}
@@ -51,9 +88,7 @@ const VerifyOtp = () => {
 
         <div className="flex items-center w-full mt-4">
           <Button
-            onClick={() =>
-              navigate("/admin/registration/customer-registration")
-            }
+            onClick={handleVeifyOtp}
             className="text-[#FFFFFF] font-bold text-2xl bg-[#005F7E] hover:bg-[#006F8F] w-full"
           >
             Нэвтрэх

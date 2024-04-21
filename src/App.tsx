@@ -1,5 +1,5 @@
 import { BrowserRouter, useLocation } from "react-router-dom";
-import CustomerRouter from "./routes/CustomerRoutes";
+// import CustomerRouter from "./routes/CustomerRoutes";
 import { useEffect } from "react";
 import AdminRoutes from "./routes/AdminRoutes";
 
@@ -35,7 +35,7 @@ const App = () => {
       <BrowserRouter>
         <ScrollToTop />
         <TitleUpdater />
-        <CustomerRouter />
+        {/* <CustomerRouter /> */}
         <AdminRoutes />
       </BrowserRouter>
     </>

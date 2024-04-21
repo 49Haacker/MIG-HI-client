@@ -2,9 +2,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "@/axios";
 
 const Sign_In = () => {
   const navigate = useNavigate();
+  const [number, setNumber] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const handleLogin = async () => {
+    if (!number) {
+      setError("Please enter a valid phone number.");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
+
+    try {
+      const response = await axios.post("customer-login", {
+        phoneNo: number,
+      });
+
+      // console.log(response.data);
+      const res_number = response.data.data.phoneNo;
+
+      navigate("/admin/verify-otp", { state: { phoneNumber: res_number } });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <>
@@ -23,12 +50,15 @@ const Sign_In = () => {
             <Input
               placeholder="+(976) 0000-0000"
               className="placeholder:text-[#B3CFD8] text-[#424B5A] font-normal text-[14px] leading-[17.36px]"
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
             />
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
 
           <div className="flex items-center w-full mt-4">
             <Button
-              onClick={() => navigate("/admin/verify-otp")}
+              onClick={handleLogin}
               className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#006F8F] font-bold text-[16px] leading-[20.03px] w-full text-center"
             >
               Үргэлжлүүлэх

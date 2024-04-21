@@ -10,4 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
+  // here set the proxy serve which not come the cros error
+  // server: {
+  //   proxy: {
+  //     "/api": "http://localhost:3011",
+  //   },
+  // },
 });
