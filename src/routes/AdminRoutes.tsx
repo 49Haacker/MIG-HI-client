@@ -30,6 +30,7 @@ const AdminRoutes = () => {
     <>
       <Routes>
         {/* public routes */}
+
         <Route path="/admin" element={<AuthLayout />}>
           <Route index element={<Sign_In />} />
           <Route path="verify-otp" element={<VerifyOtp />} />
