@@ -1,10 +1,23 @@
-import { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import "@/shared-css/CustomScroller.css";
 
 const RegistrationLayout = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>(location.pathname);
+  const navigate = useNavigate();
+
+  const privateRoutes = ["/admin/registration"];
+
+  const isPrivateRoute = privateRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
+
+  useEffect(() => {
+    if (!localStorage.getItem("token") && isPrivateRoute) {
+      navigate("/admin");
+    }
+  }, []);
 
   const handleTabClick = (path: string) => {
     setActiveTab(path);

@@ -1,5 +1,5 @@
 import { BrowserRouter, useLocation } from "react-router-dom";
-// import CustomerRouter from "./routes/CustomerRoutes";
+import CustomerRouter from "./routes/CustomerRoutes";
 import { useEffect } from "react";
 import AdminRoutes from "./routes/AdminRoutes";
 
@@ -30,13 +30,15 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
+  const isAdminPath = window.location.pathname.startsWith("/admin");
+
   return (
     <>
       <BrowserRouter>
         <ScrollToTop />
         <TitleUpdater />
-        {/* <CustomerRouter /> */}
-        <AdminRoutes />
+
+        {isAdminPath ? <AdminRoutes /> : <CustomerRouter />}
       </BrowserRouter>
     </>
   );

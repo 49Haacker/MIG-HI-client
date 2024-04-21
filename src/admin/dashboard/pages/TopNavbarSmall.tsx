@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import axios from "@/axios";
 
 const TopNavbarSmall = () => {
   const [activeLink, setActiveLink] = useState<number | null>(null);
@@ -39,7 +40,7 @@ const TopNavbarSmall = () => {
     },
 
     {
-      path: "/",
+      path: "/admin",
       text: "Exit",
       image: "/assets/customer/sidenavbar/sideNavLogOut.svg",
       focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",
@@ -69,6 +70,16 @@ const TopNavbarSmall = () => {
     setActiveLink(null);
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    try {
+      await axios.post("logout");
+
+      localStorage.removeItem("token");
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   return (
     <>
       <div className="w-full flex flex-col gap-1">
@@ -94,6 +105,7 @@ const TopNavbarSmall = () => {
             <Link
               key={index}
               to={link.path}
+              onClick={link.text === "Exit" ? handleLogout : undefined}
               className={`flex flex-col items-center gap-2 w-full ${
                 activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
               }`}
