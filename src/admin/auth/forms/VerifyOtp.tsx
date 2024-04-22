@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UnknownAction } from "@reduxjs/toolkit";
@@ -12,13 +12,21 @@ import {
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
-  const [code, setCode] = useState<string>("");
+  const [code, setCode] = useState<string | null>(null);
 
   const location = useLocation();
   const phoneNumber = location.state.phoneNumber;
 
   const [error, setError] = useState<string>("");
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (localStorage.getItem("otp")) {
+      const storeOtp = localStorage.getItem("otp");
+      // console.log(storeOtp);
+      setCode(storeOtp);
+    }
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input: string = e.target.value;
@@ -81,7 +89,7 @@ const VerifyOtp = () => {
           <Input
             placeholder="xxxxxx"
             className="placeholder:text-[#B3CFD8] text-[#424B5A] font-normal text-[14px] leading-[17.36px]"
-            value={code}
+            value={code ?? ""}
             onChange={handleChange}
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}

@@ -11,6 +11,7 @@ import { UnknownAction } from "@reduxjs/toolkit";
 interface ResponseData {
   data: {
     phoneNo: string;
+    otp: string;
     // other properties if any
   };
 }
@@ -37,11 +38,24 @@ const Sign_In = () => {
       );
       const responseData = action.payload as ResponseData;
 
+      const storeOtp = responseData.data.otp;
+      localStorage.setItem("otp", storeOtp);
+
       const res_number = responseData.data.phoneNo;
 
       navigate("/admin/verify-otp", { state: { phoneNumber: res_number } });
     } catch (error) {
-      console.error("Error:", error);
+      if (error instanceof Error) {
+        setError(error.message || "An error occurred");
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      } else {
+        setError("An unknown error occurred");
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      }
     }
   };
 
