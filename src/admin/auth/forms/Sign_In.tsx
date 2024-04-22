@@ -3,12 +3,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "@/axios";
+// import axios from "@/axios";
+import { useDispatch } from "react-redux";
+import { adminCustomerLogin } from "@/redux/features/login/loginSlice";
+import { UnknownAction } from "@reduxjs/toolkit";
+
+interface ResponseData {
+  data: {
+    phoneNo: string;
+    // other properties if any
+  };
+}
 
 const Sign_In = () => {
   const navigate = useNavigate();
   const [number, setNumber] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     if (!number) {
@@ -20,12 +32,12 @@ const Sign_In = () => {
     }
 
     try {
-      const response = await axios.post("customer-login", {
-        phoneNo: number,
-      });
+      const action = await dispatch(
+        adminCustomerLogin(number) as unknown as UnknownAction
+      );
+      const responseData = action.payload as ResponseData;
 
-      // console.log(response.data);
-      const res_number = response.data.data.phoneNo;
+      const res_number = responseData.data.phoneNo;
 
       navigate("/admin/verify-otp", { state: { phoneNumber: res_number } });
     } catch (error) {

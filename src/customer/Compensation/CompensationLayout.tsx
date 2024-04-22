@@ -1,10 +1,23 @@
-import { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import "@/shared-css/CustomScroller.css";
 
 const CompensationLayout = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>(location.pathname);
+  const navigate = useNavigate();
+
+  const privateRoutes = ["/compensation"];
+
+  const isPrivateRoute = privateRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
+
+  useEffect(() => {
+    if (!localStorage.getItem("token") && isPrivateRoute) {
+      navigate("/");
+    }
+  }, []);
 
   const handleTabClick = (path: string) => {
     setActiveTab(path);

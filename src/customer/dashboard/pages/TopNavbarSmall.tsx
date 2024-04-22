@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { logoutUser } from "@/redux/features/logOut/logoutSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/app/store";
 
 const TopNavbarSmall = () => {
   const [activeLink, setActiveLink] = useState<number | null>(null);
   const location = useLocation();
+
+  const dispatch: AppDispatch = useDispatch();
 
   const links = [
     // Insurance contract
@@ -61,6 +66,14 @@ const TopNavbarSmall = () => {
     setActiveLink(null);
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    try {
+      dispatch(logoutUser());
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   return (
     <>
       <div className="w-full flex flex-col gap-1">
@@ -86,6 +99,7 @@ const TopNavbarSmall = () => {
             <Link
               key={index}
               to={link.path}
+              onClick={link.path === "Exit" ? handleLogout : undefined}
               className={`flex flex-col items-center gap-2  ${
                 activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
               }`}

@@ -2,8 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChangeEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "@/axios";
+import { UnknownAction } from "@reduxjs/toolkit";
+import {
+  verifyOtp,
+  VerifyOtpResponse,
+} from "@/redux/features/otpVerify/otpVerifySlice";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
@@ -13,6 +18,7 @@ const VerifyOtp = () => {
   const phoneNumber = location.state.phoneNumber;
 
   const [error, setError] = useState<string>("");
+  const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input: string = e.target.value;
@@ -32,16 +38,18 @@ const VerifyOtp = () => {
     }
 
     try {
-      const response = await axios.post("otp-verify", {
-        phoneNo: phoneNumber,
-        otp: code,
-      });
+      const actions = await dispatch(
+        verifyOtp({
+          phoneNumber: phoneNumber,
+          code: code,
+        }) as unknown as UnknownAction
+      );
 
-      // console.log("otp respone", response);
+      const responseData = actions.payload as VerifyOtpResponse;
 
-      if (response.data.statusCode === 200) {
-        localStorage.setItem("token", response.data.token);
+      // console.log(responseData.statusCode);
 
+      if (responseData.statusCode === 200) {
         navigate("/admin/registration/customer-registration");
       } else {
         console.error("OTP verification failed");

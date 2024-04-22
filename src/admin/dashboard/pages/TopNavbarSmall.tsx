@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import axios from "@/axios";
+
+import { logoutUser } from "@/redux/features/logOut/logoutSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/app/store";
 
 const TopNavbarSmall = () => {
   const [activeLink, setActiveLink] = useState<number | null>(null);
   const location = useLocation();
+
+  const dispatch: AppDispatch = useDispatch();
 
   const links = [
     // Registration
@@ -72,9 +77,7 @@ const TopNavbarSmall = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("logout");
-
-      localStorage.removeItem("token");
+      dispatch(logoutUser());
     } catch (error) {
       console.log("Error", error);
     }

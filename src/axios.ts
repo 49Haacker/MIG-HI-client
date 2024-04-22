@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3011/api/",
@@ -18,3 +18,5 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
+
+export { AxiosError };

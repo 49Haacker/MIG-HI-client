@@ -1,9 +1,14 @@
+import { logoutUser } from "@/redux/features/logOut/logoutSlice";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/app/store";
 
 const SideNavbar = () => {
   const [activeLink, setActiveLink] = useState<number | null>(null);
   const location = useLocation();
+
+  const dispatch: AppDispatch = useDispatch();
 
   const links = [
     // Insurance contract
@@ -52,6 +57,14 @@ const SideNavbar = () => {
     setActiveLink(null);
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    try {
+      dispatch(logoutUser());
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   return (
     <>
       <div className="h-screen bg-[#005F7E] w-[268px] px-4 py-8 flex flex-col justify-between">
@@ -91,7 +104,11 @@ const SideNavbar = () => {
 
         {/* logout section */}
         <div className="">
-          <Link to={"/"} className="flex items-center gap-2">
+          <Link
+            to={"/"}
+            className="flex items-center gap-2"
+            onClick={handleLogout}
+          >
             <img
               src="/assets/customer/sidenavbar/sideNavLogOut.svg"
               alt="sideNavLogOut"

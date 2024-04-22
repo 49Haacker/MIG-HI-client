@@ -1,10 +1,14 @@
-import axios from "@/axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { logoutUser } from "@/redux/features/logOut/logoutSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/app/store";
 
 const SideNavbar = () => {
   const [activeLink, setActiveLink] = useState<number | null>(null);
   const location = useLocation();
+
+  const dispatch: AppDispatch = useDispatch();
 
   const links = [
     // Registration
@@ -65,14 +69,11 @@ const SideNavbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("logout");
-
-      localStorage.removeItem("token");
+      dispatch(logoutUser());
     } catch (error) {
       console.log("Error", error);
     }
   };
-
   return (
     <>
       <div className="h-screen bg-[#005F7E] w-[268px] px-4 py-8 flex flex-col justify-between">
