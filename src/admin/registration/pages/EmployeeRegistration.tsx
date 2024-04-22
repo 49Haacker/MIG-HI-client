@@ -102,6 +102,7 @@ const EmployeeRegistration = () => {
       <div className="flex flex-col gap-4 items-start justify-between w-full">
         <div className="flex flex-col items-start w-full">
           <div className="flex flex-col sm:flex-row gap-4 w-full">
+            {/* last name */}
             <div className="flex flex-col gap-2 w-full">
               <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
                 Овог
@@ -114,6 +115,7 @@ const EmployeeRegistration = () => {
               />
             </div>
 
+            {/* name */}
             <div className="flex flex-col gap-2 w-full">
               <Label className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[17.36px]">
                 Нэр
@@ -126,6 +128,7 @@ const EmployeeRegistration = () => {
               />
             </div>
 
+            {/* dropdown and input box */}
             <div className="flex flex-col gap-2 w-full">
               <Label
                 htmlFor=""
@@ -136,6 +139,7 @@ const EmployeeRegistration = () => {
 
               <div className="flex gap-8 w-full">
                 <div className="flex gap-2">
+                  {/* first dropdown */}
                   <div className="relative inline-block text-left">
                     <div>
                       <button
@@ -189,6 +193,7 @@ const EmployeeRegistration = () => {
                     )}
                   </div>
 
+                  {/* second dropdown */}
                   <div className="relative inline-block text-left">
                     <div>
                       <button
@@ -257,6 +262,7 @@ const EmployeeRegistration = () => {
             </div>
           </div>
 
+          {/* phone number */}
           <div className="flex flex-col gap-2 w-full sm:w-[33%] mt-4">
             <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
               Утасны дугаар

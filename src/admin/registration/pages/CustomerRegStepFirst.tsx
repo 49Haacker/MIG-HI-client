@@ -2,13 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { useRef, useState } from "react";
 import axios from "@/axios";
 
@@ -19,6 +13,7 @@ const CustomerRegStepFirst = () => {
   const vehicleCertificateRef = useRef<HTMLInputElement>(null);
   const drivingFrontRef = useRef<HTMLInputElement>(null);
   const drivingBackRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string>("");
 
   const [formData, setFormData] = useState<{
     civilCode: File | null;
@@ -41,6 +36,33 @@ const CustomerRegStepFirst = () => {
     identityNumber: "",
   });
 
+  const [selectedLater1, setSelectedLater1] = useState<string>("");
+  const [selectedLater2, setSelectedLater2] = useState<string>("");
+  const [isOpen1, setIsOpen1] = useState<boolean>(false);
+  const [isOpen2, setIsOpen2] = useState<boolean>(false);
+
+  const handleLaterSelect1 = (later: string) => {
+    setSelectedLater1(later);
+    setIsOpen1(false);
+  };
+  const handleLaterSelect2 = (later: string) => {
+    setSelectedLater2(later);
+    setIsOpen2(false);
+  };
+
+  const toggleDropdown1 = () => {
+    setIsOpen1(!isOpen1);
+    if (isOpen2) {
+      setIsOpen2(false);
+    }
+  };
+  const toggleDropdown2 = () => {
+    setIsOpen2(!isOpen2);
+    if (isOpen1) {
+      setIsOpen1(false);
+    }
+  };
+
   const handleInputChange = (value: string, fieldName: string) => {
     setInputValues((prevState) => ({
       ...prevState,
@@ -56,7 +78,7 @@ const CustomerRegStepFirst = () => {
 
   const toggleCheckbox = () => {
     setIsChecked((prevState) => !prevState);
-    console.log(isChecked);
+    // console.log(isChecked);
   };
 
   const handleFileChange = (
@@ -75,6 +97,19 @@ const CustomerRegStepFirst = () => {
   };
 
   const handleCreateCustomer = () => {
+    if (
+      !inputValues.lastName ||
+      !inputValues.firstName ||
+      !inputValues.phoneNumber ||
+      !inputValues.identityNumber
+    ) {
+      setError("Please fill in all required fields.");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
+
     const data = new FormData();
 
     // Map frontend input keys to backend keys
@@ -141,7 +176,7 @@ const CustomerRegStepFirst = () => {
         console.error("Error:", error);
       });
 
-    console.log("form was submited");
+    // console.log("form was submited");
   };
 
   return (
@@ -202,71 +237,124 @@ const CustomerRegStepFirst = () => {
               </Label>
 
               <div className="flex flex-col sm:flex-row gap-8 w-full">
+                {/* dropdown and input box */}
                 <div className="flex gap-2">
+                  {/* first dropdown */}
                   {isChecked && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                    <div className="relative inline-block text-left">
+                      <div>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8] shadow-sm bg-white px-4 py-2 text-sm font-medium text-[#B3CFD8] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                          id="options-menu"
+                          onClick={toggleDropdown1}
                         >
-                          P
-                        </Button>
-                      </DropdownMenuTrigger>
+                          {selectedLater1 ? selectedLater1 : "P"}
+                        </button>
+                      </div>
 
-                      <DropdownMenuContent className="w-56">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            A
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            Б
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            B
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            Г
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      {isOpen1 && (
+                        <div
+                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
+                        >
+                          <div className="py-1" role="none">
+                            <button
+                              onClick={() => handleLaterSelect1("A")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              A
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect1("Б")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              Б
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect1("B")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              B
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect1("Г")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              Г
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
 
+                  {/* second dropdown */}
                   {isChecked && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                    <div className="relative inline-block text-left">
+                      <div>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8] shadow-sm bg-white px-4 py-2 text-sm font-medium text-[#B3CFD8] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                          id="options-menu"
+                          onClick={toggleDropdown2}
                         >
-                          Д
-                        </Button>
-                      </DropdownMenuTrigger>
+                          {selectedLater2 ? selectedLater2 : "Д"}
+                        </button>
+                      </div>
 
-                      <DropdownMenuContent className="w-56">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            A
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            Б
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            B
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-[#B3CFD8] font-medium text-[14px] leading-[14px]">
-                            Г
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      {isOpen2 && (
+                        <div
+                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
+                        >
+                          <div className="py-1" role="none">
+                            <button
+                              onClick={() => handleLaterSelect2("A")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              A
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect2("Б")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              Б
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect2("B")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              B
+                            </button>
+                            <button
+                              onClick={() => handleLaterSelect2("Г")}
+                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
+                              role="menuitem"
+                            >
+                              Г
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
 
-                  <div className="flex">
+                  <div className="flex w-full">
                     <Input
                       placeholder="Дугаар"
-                      className="text-[#B3CFD8] font-medium text-[14px] leading-[14px] placeholder:text-[#B3CFD8]"
+                      className="text-[#424B5A] font-medium text-[14px] leading-[14px] placeholder:text-[#B3CFD8]"
                       value={inputValues.identityNumber}
                       onChange={(e) =>
                         handleInputChange(e.target.value, "identityNumber")
@@ -464,14 +552,20 @@ const CustomerRegStepFirst = () => {
         </div>
 
         {/* Add button */}
-        <div className="w-full flex justify-end">
-          <Button
-            type="submit"
-            className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
-            onClick={handleCreateCustomer}
-          >
-            Нэмэх
-          </Button>
+        <div className="w-full flex flex-col justify-end">
+          {error && (
+            <p className="text-red-500 w-full text-right my-4">{error}</p>
+          )}
+
+          <div className="w-full flex justify-end">
+            <Button
+              type="submit"
+              className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
+              onClick={handleCreateCustomer}
+            >
+              Нэмэх
+            </Button>
+          </div>
         </div>
       </div>
     </>
