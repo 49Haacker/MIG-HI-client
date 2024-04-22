@@ -255,7 +255,7 @@ const CustomerRegStepFirst = () => {
 
                       {isOpen1 && (
                         <div
-                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
@@ -311,7 +311,7 @@ const CustomerRegStepFirst = () => {
 
                       {isOpen2 && (
                         <div
-                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
