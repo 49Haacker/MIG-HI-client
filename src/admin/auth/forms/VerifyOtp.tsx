@@ -56,12 +56,25 @@ const VerifyOtp = () => {
       const responseData = actions.payload as VerifyOtpResponse;
 
       // console.log(responseData.statusCode);
+      const userType = responseData.data.userType;
+      // console.log(userType);
 
       if (responseData.statusCode === 200) {
-        navigate("/admin/registration/customer-registration");
+        // navigate("/admin/registration/customer-registration");
+        if (userType === "1") {
+          navigate("/admin/registration/customer-registration");
+        } else {
+          navigate("/insurance-contract/list-contracts");
+        }
       } else {
         console.error("OTP verification failed");
       }
+
+      // if (responseData.statusCode === 200) {
+      //   navigate("/admin/registration/customer-registration");
+      // } else {
+      //   console.error("OTP verification failed");
+      // }
     } catch (error) {
       console.error("Error:", error);
     }

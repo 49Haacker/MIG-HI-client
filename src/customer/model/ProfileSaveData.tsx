@@ -11,30 +11,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-const ProfileSaveData = () => {
-  //   const { onClose } = props;
+interface ProfileSaveDataProps {
+  number: string;
+  onPhoneNumberChange: (newPhoneNumber: string) => void;
+}
 
-  const [phoneNumber, setPhoneNumber] = useState<string>("99990000");
-
-  //   const onClick = () => {
-  //     console.log("close click");
-  //   };
+const ProfileSaveData: React.FC<ProfileSaveDataProps> = ({
+  number,
+  onPhoneNumberChange,
+}) => {
+  const [phoneNumber, setPhoneNumber] = useState<string>(number);
 
   const handleSave = () => {
-    console.log(phoneNumber);
+    // console.log(phoneNumber);
+    onPhoneNumberChange(phoneNumber);
   };
 
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] hover:text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
-          >
-            Хадгалах
-            {/* Save */}
-          </Button>
+          {/* variant="outline" */}
+          <img
+            src="/assets/customer/profile/editIcon.svg"
+            alt="editIcon"
+            className="absolute right-2 top-2 cursor-pointer"
+          />
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[425px]">

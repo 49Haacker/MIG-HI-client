@@ -11,6 +11,7 @@ interface ResponseData {
   data: {
     phoneNo: string;
     otp: string;
+    userType: string;
     // other properties if any
   };
 }
@@ -40,7 +41,10 @@ const Sign_In = () => {
       const storeOtp = responseData.data.otp;
       localStorage.setItem("otp", storeOtp);
 
+      // console.log(responseData);
+
       const res_number = responseData.data.phoneNo;
+      // const userType = responseData.data.userType;
 
       navigate("/verify-otp", { state: { phoneNumber: res_number } });
     } catch (error) {

@@ -26,12 +26,22 @@ const Profile = () => {
   const [customerData, setCustomerData] = useState<CustomerData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<Record<string, File | null>>({
+    identityFront: null,
+    identityBack: null,
+    drivingFront: null,
+    drivingBack: null,
+    vehicleCertificate: null,
+  });
 
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await axios.get("get-customers-details");
-        const customerData = response.data.data as CustomerData;
+        const response = await axios.get("current-customer");
+        const customerData = response.data.customer as CustomerData;
+
+        // console.log(customerData);
+
         setCustomerData(customerData);
         setLoading(false);
       } catch (error) {
@@ -54,6 +64,51 @@ const Profile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const handleImageChange = (file: File | null, type: string) => {
+    setImageFiles({ ...imageFiles, [type]: file });
+  };
+
+  const handlePhoneNumberChange = (newPhoneNumber: string) => {
+    if (customerData) {
+      setCustomerData({
+        ...customerData,
+        PhoneNo: newPhoneNumber,
+      });
+    }
+  };
+
+  const handleEditProfile = async () => {
+    try {
+      const formData = new FormData();
+      // formData.append("FirstName", customerData?.FirstName || "");
+      // formData.append("LastName", customerData?.LastName || "");
+      formData.append("PhoneNo", customerData?.PhoneNo || "");
+
+      // Append individual image files to the formData
+      formData.append("CivilWarCertificate", imageFiles.identityFront || "");
+      formData.append("IdentitybackCertificate", imageFiles.identityBack || "");
+      formData.append(
+        "SteeringWheelCertificate",
+        imageFiles.drivingFront || ""
+      );
+      formData.append("DrivingLinceseback", imageFiles.drivingBack || "");
+      formData.append(
+        "VehicleCertificate",
+        imageFiles.vehicleCertificate || ""
+      );
+
+      const response = await axios.post("customers-edit-profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Profile updated successfully", response);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
 
   return (
     <>
@@ -112,98 +167,187 @@ const Profile = () => {
               <Input
                 placeholder="99990000"
                 className="w-full absolute"
-                defaultValue={customerData.PhoneNo}
+                value={customerData.PhoneNo}
+                disabled
               />
 
-              <img
-                src="/assets/customer/profile/editIcon.svg"
-                alt="editIcon"
-                className="absolute right-2 top-2"
+              <ProfileSaveData
+                number={customerData.PhoneNo}
+                onPhoneNumberChange={handlePhoneNumberChange}
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-4 mt-12">
             <div className="flex flex-wrap gap-4">
+              {/* Identity card (front side) */}
               <div className="flex flex-col gap-2">
-                {/* Identity card (front side) */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Иргэний үнэмлэх (урд тал)
                 </h1>
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
-                      src="/assets/customer/profile/identityFront.svg"
+                      src={
+                        imageFiles.identityFront
+                          ? URL.createObjectURL(imageFiles.identityFront)
+                          : customerData?.CivilWarCertificate ||
+                            "/assets/customer/profile/identityFront.svg"
+                      }
                       alt="identityFront"
                     />
 
+                    <input
+                      id="civilCertificateFrontInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e.target.files?.[0] || null,
+                          "identityFront"
+                        )
+                      }
+                    />
                     <img
                       src="/assets/customer/profile/editIcon.svg"
-                      alt="editIcon"
-                      className="absolute right-2 top-2"
+                      alt="Edit"
+                      className="absolute right-2 top-2 cursor-pointer"
+                      onClick={() =>
+                        document
+                          .getElementById("civilCertificateFrontInput")
+                          ?.click()
+                      }
                     />
                   </div>
                 </div>
               </div>
 
+              {/* Identity card (back) */}
               <div className="flex flex-col gap-2">
-                {/* Identity card (back) */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Иргэний үнэмлэх (ар тал)
                 </h1>
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
-                      src="/assets/customer/profile/identityBack.svg"
-                      alt="identityBack"
+                      src={
+                        imageFiles.identityBack
+                          ? URL.createObjectURL(imageFiles.identityBack)
+                          : customerData?.IdentitybackCertificate ||
+                            "/assets/customer/profile/identityBack.svg"
+                      }
+                      alt="identityFront"
                     />
 
+                    <input
+                      id="civilCertificateBackInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e.target.files?.[0] || null,
+                          "identityBack"
+                        )
+                      }
+                    />
                     <img
                       src="/assets/customer/profile/editIcon.svg"
-                      alt="editIcon"
-                      className="absolute right-2 top-2"
+                      alt="Edit"
+                      className="absolute right-2 top-2 cursor-pointer"
+                      onClick={() =>
+                        document
+                          .getElementById("civilCertificateBackInput")
+                          ?.click()
+                      }
                     />
                   </div>
                 </div>
               </div>
 
+              {/* Driving license (front side) */}
               <div className="flex flex-col gap-2">
-                {/* Driving license (front side) */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Жолоооны үнэмлэх (урд тал)
                 </h1>
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
-                      src="/assets/customer/profile/drivingFront.svg"
-                      alt="drivingFront"
+                      src={
+                        imageFiles.drivingFront
+                          ? URL.createObjectURL(imageFiles.drivingFront)
+                          : customerData?.SteeringWheelCertificate ||
+                            "/assets/customer/profile/drivingFront.svg"
+                      }
+                      // src={
+                      //   customerData.SteeringWheelCertificate
+                      //     ? customerData.SteeringWheelCertificate
+                      //     : "/assets/customer/profile/drivingFront.svg"
+                      // }
+                      alt="identityFront"
                     />
 
+                    <input
+                      id="drivingFrontInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e.target.files?.[0] || null,
+                          "drivingFront"
+                        )
+                      }
+                    />
                     <img
                       src="/assets/customer/profile/editIcon.svg"
-                      alt="editIcon"
-                      className="absolute right-2 top-2"
+                      alt="Edit"
+                      className="absolute right-2 top-2 cursor-pointer"
+                      onClick={() =>
+                        document.getElementById("drivingFrontInput")?.click()
+                      }
                     />
                   </div>
                 </div>
               </div>
 
+              {/* Driving license (back side) */}
               <div className="flex flex-col gap-2">
-                {/* Driving license (back side) */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Жолоооны үнэмлэх (ар тал тал)
                 </h1>
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
-                      src="/assets/customer/profile/drivingBack.svg"
-                      alt="drivingBack"
+                      src={
+                        imageFiles.drivingBack
+                          ? URL.createObjectURL(imageFiles.drivingBack)
+                          : customerData?.DrivingLinceseback ||
+                            "/assets/customer/profile/drivingBack.svg"
+                      }
+                      alt="identityFront"
                     />
 
+                    <input
+                      id="drivingBackInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e.target.files?.[0] || null,
+                          "drivingBack"
+                        )
+                      }
+                    />
                     <img
                       src="/assets/customer/profile/editIcon.svg"
-                      alt="editIcon"
-                      className="absolute right-2 top-2"
+                      alt="Edit"
+                      className="absolute right-2 top-2 cursor-pointer"
+                      onClick={() =>
+                        document.getElementById("drivingBackInput")?.click()
+                      }
                     />
                   </div>
                 </div>
@@ -211,29 +355,54 @@ const Profile = () => {
             </div>
 
             <div className="flex flex-wrap gap-4">
+              {/* Vehicle certificate */}
               <div className="flex flex-col gap-2">
-                {/* Vehicle certificate */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Тээврийн хэрэгслийн гэрчилгээ
                 </h1>
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
-                      src="/assets/customer/profile/vehicleCerti.svg"
-                      alt="vehicleCerti"
+                      src={
+                        imageFiles.vehicleCertificate
+                          ? URL.createObjectURL(imageFiles.vehicleCertificate)
+                          : customerData?.VehicleCertificate ||
+                            "/assets/customer/profile/vehicleCerti.svg"
+                      }
+                      // src={
+                      //   customerData.VehicleCertificate
+                      //     ? customerData.VehicleCertificate
+                      //     : "/assets/customer/profile/vehicleCerti.svg"
+                      // }
+                      alt="identityFront"
                     />
 
+                    <input
+                      id="vehicleInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e.target.files?.[0] || null,
+                          "vehicleCertificate"
+                        )
+                      }
+                    />
                     <img
                       src="/assets/customer/profile/editIcon.svg"
-                      alt="editIcon"
-                      className="absolute right-2 top-2"
+                      alt="Edit"
+                      className="absolute right-2 top-2 cursor-pointer"
+                      onClick={() =>
+                        document.getElementById("vehicleInput")?.click()
+                      }
                     />
                   </div>
                 </div>
               </div>
 
+              {/* Excel data entry */}
               <div className="flex flex-col gap-2">
-                {/* Excel data entry */}
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Excel мэдээлэл оруулах
                 </h1>
@@ -256,15 +425,13 @@ const Profile = () => {
             </div>
 
             <div className="flex justify-end w-full">
-              {/* <Button
-              onClick={openModal}
-              className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
-            >
-              Хадгалах
-            </Button>
-            Save */}
-
-              <ProfileSaveData />
+              <Button
+                className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
+                onClick={handleEditProfile}
+              >
+                Хадгалах
+              </Button>
+              {/* Save */}
             </div>
           </div>
         </div>

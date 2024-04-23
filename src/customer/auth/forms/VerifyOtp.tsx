@@ -55,11 +55,16 @@ const VerifyOtp = () => {
 
       const responseData = actions.payload as VerifyOtpResponse;
 
-      // console.log(responseData.statusCode);
+      const userType = responseData.data.userType;
+      // console.log(userType);
 
       if (responseData.statusCode === 200) {
         // navigate("/admin/registration/customer-registration");
-        navigate("/insurance-contract/list-contracts");
+        if (userType === "1") {
+          navigate("/admin/registration/customer-registration");
+        } else {
+          navigate("/insurance-contract/list-contracts");
+        }
       } else {
         console.error("OTP verification failed");
       }

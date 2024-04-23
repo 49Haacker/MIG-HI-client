@@ -30,7 +30,7 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
-  const isAdminPath = window.location.pathname.startsWith("/admin");
+  // const isAdminPath = window.location.pathname.startsWith("/admin");
 
   return (
     <>
@@ -38,7 +38,10 @@ const App = () => {
         <ScrollToTop />
         <TitleUpdater />
 
-        {isAdminPath ? <AdminRoutes /> : <CustomerRouter />}
+        {/* {isAdminPath ? <AdminRoutes /> : <CustomerRouter />} */}
+
+        <CustomerRouter />
+        <AdminRoutes />
       </BrowserRouter>
     </>
   );
