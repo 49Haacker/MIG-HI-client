@@ -185,7 +185,7 @@ const Profile = () => {
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Иргэний үнэмлэх (урд тал)
                 </h1>
-                <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
+                <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-auto overflow-hidden">
                   <div className="relative flex justify-center items-center">
                     <img
                       src={
@@ -195,6 +195,7 @@ const Profile = () => {
                             "/assets/customer/profile/identityFront.svg"
                       }
                       alt="identityFront"
+                      className="overflow-hidden"
                     />
 
                     <input
