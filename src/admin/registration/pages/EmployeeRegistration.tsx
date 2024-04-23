@@ -15,6 +15,9 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+// import { FullPageLoader } from "@/components/ui/FullPageLoader";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const formSchema = z.object({
   lastName: z.string().min(3, {
@@ -36,6 +39,7 @@ const EmployeeRegistration = () => {
   const [selectedLater2, setSelectedLater2] = useState<string>("");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
   const [isOpen2, setIsOpen2] = useState<boolean>(false);
+  const [isLoading, setisLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,11 +87,13 @@ const EmployeeRegistration = () => {
       await axios.post("admin", combinedValue);
 
       // console.log(response);
-
+      toast.success("Manager regester successfully");
       setSelectedLater1("");
       setSelectedLater2("");
     } catch (error) {
-      console.log("Manager regester error: ", error);
+      console.log("Manager regester error: ", error.response.data.errors[0].msg);
+      toast.error(error.response.data.errors[0].msg);
+
     }
   };
 
@@ -325,6 +331,18 @@ const EmployeeRegistration = () => {
             </div>
           </form>
         </Form>
+        <ToastContainer
+          position="top-right" // Position in the top-right corner
+          autoClose={3000} // Auto-close after 3 seconds
+          hideProgressBar={false} // Show the progress bar
+          newestOnTop={true} // Show new notifications on top
+          closeOnClick // Close on click
+          rtl={false} // Right-to-left or left-to-right
+          pauseOnFocusLoss // Pause when the window loses focus
+          draggable // Allow the toast to be dragged
+          pauseOnHover // Pause when hovering over the toast
+        />
+
       </div>
     </>
   );

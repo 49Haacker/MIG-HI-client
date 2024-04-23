@@ -22,6 +22,7 @@ const Sign_In = () => {
   const [error, setError] = useState<string>("");
 
   const dispatch = useDispatch();
+  localStorage.removeItem("phNo");
 
   const handleLogin = async () => {
     if (!number) {
@@ -40,7 +41,8 @@ const Sign_In = () => {
 
       const storeOtp = responseData.data.otp;
       localStorage.setItem("otp", storeOtp);
-
+      
+      localStorage.setItem("phNo", responseData.data.phoneNo);
       const res_number = responseData.data.phoneNo;
 
       navigate("/admin/verify-otp", { state: { phoneNumber: res_number } });

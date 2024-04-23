@@ -4,7 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ProfileSaveData from "@/customer/model/ProfileSaveData";
 import { useEffect, useState } from "react";
-
+import FullPageLoader from '@/components/ui/FullPageLoader';
+import { FaTrashAlt } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface CustomerData {
   id: number;
   FirstName: string;
@@ -58,7 +61,7 @@ const Profile = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return  <FullPageLoader isLoading={loading} />;
   }
 
   if (error) {
@@ -79,54 +82,61 @@ const Profile = () => {
   };
 
   const handleEditProfile = async () => {
+    // setLoading(true);
     try {
       const formData = new FormData();
-      // formData.append("FirstName", customerData?.FirstName || "");
-      // formData.append("LastName", customerData?.LastName || "");
       formData.append("PhoneNo", customerData?.PhoneNo || "");
-
+  
       // Append individual image files to the formData
       formData.append("CivilWarCertificate", imageFiles.identityFront || "");
       formData.append("IdentitybackCertificate", imageFiles.identityBack || "");
-      formData.append(
-        "SteeringWheelCertificate",
-        imageFiles.drivingFront || ""
-      );
+      formData.append("SteeringWheelCertificate", imageFiles.drivingFront || "");
       formData.append("DrivingLinceseback", imageFiles.drivingBack || "");
-      formData.append(
-        "VehicleCertificate",
-        imageFiles.vehicleCertificate || ""
-      );
-
+      formData.append("VehicleCertificate", imageFiles.vehicleCertificate || "");
+  
       const response = await axios.post("customers-edit-profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
+  
+     
+        toast.success("Profile updated successfully");
+    
+  
       console.log("Profile updated successfully", response);
     } catch (error) {
       console.error("Error updating profile:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Error updating profile");
+      }
     }
   };
+  
 
   return (
     <>
+    
       {customerData && (
+        
         <div className="w-full flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start gap-8 w-full">
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col gap-2 w-full">
+              
               {/* This */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                 Овог
               </h1>
               <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
-                Цогтбаатар
+              {customerData.LastName}
                 {/* License */}
               </Button>
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col gap-2 w-full">
               {/* Name */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                 Нэр
@@ -138,7 +148,7 @@ const Profile = () => {
               </Button>
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col gap-2 w-full">
               {/* Register number */}
               <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                 Регистрийн дугаар
@@ -181,21 +191,36 @@ const Profile = () => {
           <div className="flex flex-col gap-4 mt-12">
             <div className="flex flex-wrap gap-4">
               {/* Identity card (front side) */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col relative gap-2">
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Иргэний үнэмлэх (урд тал)
+               
+                  {imageFiles.identityFront ? (
+                    <button className="absolute top-1 z-[9999] right-[10px]"
+                      onClick={() => {
+                        setImageFiles((prevData) => ({
+                          ...prevData,
+                          identityFront: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
                 </h1>
-                <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-auto overflow-hidden">
+            
+                <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[138px] overflow-hidden">
                   <div className="relative flex justify-center items-center">
                     <img
                       src={
                         imageFiles.identityFront
                           ? URL.createObjectURL(imageFiles.identityFront)
                           : customerData?.CivilWarCertificate ||
-                            "/assets/customer/profile/identityFront.svg"
+                            "/assets/customer/employee/uploadIconSm.svg"
+                          
                       }
+                      onClick={() => !imageFiles.identityFront && document.getElementById('civilCertificateFrontInput')?.click()} 
                       alt="identityFront"
-                      className="overflow-hidden"
+                        className="overflow-hidden h-[120px]"
                     />
 
                     <input
@@ -210,7 +235,7 @@ const Profile = () => {
                         )
                       }
                     />
-                    <img
+                <img
                       src="/assets/customer/profile/editIcon.svg"
                       alt="Edit"
                       className="absolute right-2 top-2 cursor-pointer"
@@ -220,15 +245,30 @@ const Profile = () => {
                           ?.click()
                       }
                     />
+                    
                   </div>
                 </div>
               </div>
 
               {/* Identity card (back) */}
-              <div className="flex flex-col gap-2">
+              <div className="flex relative flex-col gap-2">
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Иргэний үнэмлэх (ар тал)
                 </h1>
+                {imageFiles.identityBack ? (
+                    <button className="absolute top-1 z-[9999] right-[10px]"
+                      onClick={() => {
+                        setImageFiles((prevData) => ({
+                          ...prevData,
+                          identityBack: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : (
+                    ""
+
+                  )}
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
@@ -236,9 +276,13 @@ const Profile = () => {
                         imageFiles.identityBack
                           ? URL.createObjectURL(imageFiles.identityBack)
                           : customerData?.IdentitybackCertificate ||
-                            "/assets/customer/profile/identityBack.svg"
+                            "/assets/customer/employee/uploadIconSm.svg"
                       }
+                      onClick={() => !imageFiles.identityBack && document.getElementById('civilCertificateBackInput')?.click()}
+
                       alt="identityFront"
+                      className="overflow-hidden h-[120px]"
+
                     />
 
                     <input
@@ -253,7 +297,7 @@ const Profile = () => {
                         )
                       }
                     />
-                    <img
+                   <img
                       src="/assets/customer/profile/editIcon.svg"
                       alt="Edit"
                       className="absolute right-2 top-2 cursor-pointer"
@@ -279,13 +323,12 @@ const Profile = () => {
                         imageFiles.drivingFront
                           ? URL.createObjectURL(imageFiles.drivingFront)
                           : customerData?.SteeringWheelCertificate ||
-                            "/assets/customer/profile/drivingFront.svg"
+                            "/assets/customer/employee/uploadIconSm.svg"
                       }
-                      // src={
-                      //   customerData.SteeringWheelCertificate
-                      //     ? customerData.SteeringWheelCertificate
-                      //     : "/assets/customer/profile/drivingFront.svg"
-                      // }
+                      onClick={() => !imageFiles.drivingFront && document.getElementById('drivingFrontInput')?.click()} 
+
+                     className="overflow-hidden h-[120px]"
+
                       alt="identityFront"
                     />
 
@@ -301,7 +344,7 @@ const Profile = () => {
                         )
                       }
                     />
-                    <img
+                   <img
                       src="/assets/customer/profile/editIcon.svg"
                       alt="Edit"
                       className="absolute right-2 top-2 cursor-pointer"
@@ -325,9 +368,14 @@ const Profile = () => {
                         imageFiles.drivingBack
                           ? URL.createObjectURL(imageFiles.drivingBack)
                           : customerData?.DrivingLinceseback ||
-                            "/assets/customer/profile/drivingBack.svg"
+                            "/assets/customer/employee/uploadIconSm.svg"
                       }
                       alt="identityFront"
+                      className="overflow-hidden h-[120px]"
+
+                      onClick={() => !imageFiles.drivingBack && document.getElementById('drivingBackInput')?.click()} 
+                     
+
                     />
 
                     <input
@@ -342,7 +390,7 @@ const Profile = () => {
                         )
                       }
                     />
-                    <img
+                     <img
                       src="/assets/customer/profile/editIcon.svg"
                       alt="Edit"
                       className="absolute right-2 top-2 cursor-pointer"
@@ -368,14 +416,14 @@ const Profile = () => {
                         imageFiles.vehicleCertificate
                           ? URL.createObjectURL(imageFiles.vehicleCertificate)
                           : customerData?.VehicleCertificate ||
-                            "/assets/customer/profile/vehicleCerti.svg"
+                            "/assets/customer/employee/uploadIconSm.svg"
+                            
                       }
-                      // src={
-                      //   customerData.VehicleCertificate
-                      //     ? customerData.VehicleCertificate
-                      //     : "/assets/customer/profile/vehicleCerti.svg"
-                      // }
+                      onClick={() => !imageFiles.vehicleCertificate && document.getElementById('vehicleInput')?.click()} 
+
+                     className="overflow-hidden h-[120px]"
                       alt="identityFront"
+                     
                     />
 
                     <input
@@ -390,7 +438,7 @@ const Profile = () => {
                         )
                       }
                     />
-                    <img
+                      <img
                       src="/assets/customer/profile/editIcon.svg"
                       alt="Edit"
                       className="absolute right-2 top-2 cursor-pointer"
@@ -403,7 +451,7 @@ const Profile = () => {
               </div>
 
               {/* Excel data entry */}
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
                   Excel мэдээлэл оруулах
                 </h1>
@@ -422,7 +470,7 @@ const Profile = () => {
                     className="absolute right-2 top-2"
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex justify-end w-full">
@@ -435,8 +483,22 @@ const Profile = () => {
               {/* Save */}
             </div>
           </div>
+          
         </div>
-      )}
+        
+      )
+      }
+        <ToastContainer
+          position="top-right" // Position in the top-right corner
+          autoClose={3000} // Auto-close after 3 seconds
+          hideProgressBar={false} // Show the progress bar
+          newestOnTop={true} // Show new notifications on top
+          closeOnClick // Close on click
+          rtl={false} // Right-to-left or left-to-right
+          pauseOnFocusLoss // Pause when the window loses focus
+          draggable // Allow the toast to be dragged
+          pauseOnHover // Pause when hovering over the toast
+        />
     </>
   );
 };

@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button";
 
 import { useRef, useState } from "react";
 import axios from "@/axios";
+import { FaTrashAlt } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import FullPageLoader from './../../../components/ui/FullPageLoader';
 
 const CustomerRegStepFirst = () => {
+
+  const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
   const civilCodeRef = useRef<HTMLInputElement>(null);
   const identityCardRef = useRef<HTMLInputElement>(null);
@@ -14,6 +21,7 @@ const CustomerRegStepFirst = () => {
   const drivingFrontRef = useRef<HTMLInputElement>(null);
   const drivingBackRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>("");
+
 
   const [formData, setFormData] = useState<{
     civilCode: File | null;
@@ -35,6 +43,19 @@ const CustomerRegStepFirst = () => {
     phoneNumber: "",
     identityNumber: "",
   });
+
+
+  // interface FieldError {
+  //   location: string; // Where the error occurred (e.g., 'body')
+  //   msg: string; // Error message
+  //   path: string; // Field name
+  //   type: string; // Type of error
+  //   value: string; // The value that caused the error
+  // }
+
+
+
+
 
   const [selectedLater1, setSelectedLater1] = useState<string>("");
   const [selectedLater2, setSelectedLater2] = useState<string>("");
@@ -97,6 +118,7 @@ const CustomerRegStepFirst = () => {
   };
 
   const handleCreateCustomer = () => {
+    setIsLoading(true);
     if (
       !inputValues.lastName ||
       !inputValues.firstName ||
@@ -104,6 +126,7 @@ const CustomerRegStepFirst = () => {
       !inputValues.identityNumber
     ) {
       setError("Please fill in all required fields.");
+      setIsLoading(false);
       setTimeout(() => {
         setError("");
       }, 2000);
@@ -153,6 +176,9 @@ const CustomerRegStepFirst = () => {
       .post("customer-register", data)
       .then((response) => {
         console.log("Success:", response.data);
+        setIsLoading(false);
+        toast.success(response.data.message);
+
         // Reset input values to empty after successful submission
         setInputValues({
           lastName: "",
@@ -173,7 +199,8 @@ const CustomerRegStepFirst = () => {
         setIsChecked(true);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        setIsLoading(false);
+        toast.error(error.response.data.errors[0].msg);
       });
 
     // console.log("form was submited");
@@ -182,6 +209,7 @@ const CustomerRegStepFirst = () => {
   return (
     <>
       <div className="flex flex-col justify-between w-full">
+        <FullPageLoader isLoading={isLoading} />
         <div className="flex flex-col w-full">
           <div className="flex flex-col w-full">
             <div className="flex flex-col sm:flex-row gap-4 w-full mt-8">
@@ -393,20 +421,53 @@ const CustomerRegStepFirst = () => {
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3">
               {/* Civil Code (front) */}
               <div className="flex flex-col gap-2 w-full">
-                <span className="text-sm text-[#424B5A]">
-                  Иргэний үнэмл (урд тал)
-                </span>
+                <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
+                  <span className="text-sm text-[#424B5A]">
+                    Иргэний үнэмл (урд тал)
+                  </span>
+
+                  {formData.civilCode ? (
+                    <button className="absolute top-1 z-[999] right-[10px]"
+                      onClick={() => {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          civilCode: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
+
+                </div>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
                   onClick={() => handleImageClick(civilCodeRef)}
                   style={{ position: "relative" }}
                 >
                   <label htmlFor="civilCode" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
+                    {formData.civilCode ? (
+                      <>
+                        <img
+                          src={URL.createObjectURL(formData.civilCode)}
+                          alt="Civil Code"
+                          className="h-full w-full object-cover   w-[200px] h-[100px]  "
+                          onChange={(e) => handleFileChange(e,"civilCode")}
+                        />
+
+                      </>
+
+
+                    ) : (
+                      <>
+                        <img
+                          src="/assets/customer/employee/uploadIcon.svg"
+                          alt="uploadIcon"
+                          className="absolute inset-0 m-auto"
+                        />
+
+
+                      </>
+                    )}
                     <input
                       id="civilCode"
                       type="file"
@@ -415,28 +476,86 @@ const CustomerRegStepFirst = () => {
                       onChange={(e) => handleFileChange(e, "civilCode")}
                     />
                   </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Хуулах
-                  </span>
+                  {formData.civilCode ? (" ") : (
+                    <span className="text-xs text-[#005F7E] absolute bottom-4">
+                      Хуулах
+                    </span>)}
+
                 </div>
               </div>
 
               {/* Identity card (back) */}
               <div className="flex flex-col gap-2 w-full">
-                <span className="text-sm text-[#424B5A]">
+                {/* <span className="text-sm text-[#424B5A]">
                   Иргэний үнэмлэх (ар тал)
                 </span>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
                   onClick={() => handleImageClick(identityCardRef)}
                   style={{ position: "relative" }} // Add position relative to container
                 >
                   <label htmlFor="identityCard" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
+                    
+                    {formData.identityCard ? (
+                      <img
+                        src={URL.createObjectURL(formData.identityCard)}
+                        alt="Civil Code"
+                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                      />
+                    ) : (
+                      <img
+                        src="/assets/customer/employee/uploadIcon.svg"
+                        alt="uploadIcon"
+                        className="absolute inset-0 m-auto"
+                      />
+                    )} */}
+                <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
+                  <span className="text-sm text-[#424B5A]">
+                    Иргэний үнэмлэх (ар тал)
+                  </span>
+
+                  {formData.identityCard ? (
+                    <button className="absolute top-1 z-[999] right-[10px]"
+                      onClick={() => {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          identityCard: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
+
+                </div>
+                <div
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  onClick={() => handleImageClick(identityCardRef)}
+                  style={{ position: "relative" }}
+                >
+                  <label htmlFor="civilCode" className="cursor-pointer">
+                    {formData.identityCard ? (
+                      <>
+                        <img
+                          src={URL.createObjectURL(formData.identityCard)}
+                          alt="Civil Code"
+                          className="h-full w-full object-cover   w-[200px] h-[100px]  "
+                          onChange={(e) => handleFileChange(e, "civilCode")}
+                        />
+
+                      </>
+
+
+                    ) : (
+                      <>
+                        <img
+                          src="/assets/customer/employee/uploadIcon.svg"
+                          alt="uploadIcon"
+                          className="absolute inset-0 m-auto"
+                        />
+
+
+                      </>
+                    )}
                     <input
                       id="identityCard"
                       type="file"
@@ -445,19 +564,33 @@ const CustomerRegStepFirst = () => {
                       onChange={(e) => handleFileChange(e, "identityCard")}
                     />
                   </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
+
+                  {!formData.identityCard ? (<span className="text-xs text-[#005F7E] absolute bottom-4">
                     Хуулах
-                  </span>
+                  </span>) : (" ")}
                 </div>
               </div>
 
               {/* Photo of vehicle certificate */}
               <div className="flex flex-col gap-2 w-full">
-                <span className="text-sm text-[#424B5A]">
-                  Тээврийн хэрэгслийн гэрчилгээний зураг
-                </span>
+                <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
+                  <span className="text-sm text-[#424B5A]">
+                    Тээврийн хэрэгслийн гэрчилгээний зураг
+                  </span>
+                  {formData.vehicleCertificate ? (
+                    <button className="absolute top-1 z-[999] right-[10px]"
+                      onClick={() => {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          vehicleCertificate: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
+                </div>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
                   onClick={() => handleImageClick(vehicleCertificateRef)}
                   style={{ position: "relative" }} // Add position relative to container
                 >
@@ -465,11 +598,20 @@ const CustomerRegStepFirst = () => {
                     htmlFor="vehicleCertificate"
                     className="cursor-pointer"
                   >
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
+                    {formData.vehicleCertificate ? (
+                      <img
+                        src={URL.createObjectURL(formData.vehicleCertificate)}
+                        alt="Civil Code"
+                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                      />
+                    ) : (
+                      <img
+                        src="/assets/customer/employee/uploadIcon.svg"
+                        alt="uploadIcon"
+                        className="absolute inset-0 m-auto"
+                      />
+                    )}
+
                     <input
                       id="vehicleCertificate"
                       type="file"
@@ -480,9 +622,9 @@ const CustomerRegStepFirst = () => {
                       }
                     />
                   </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
+                  {formData.vehicleCertificate ? ("") : (<span className="text-xs text-[#005F7E] absolute bottom-4">
                     Хуулах
-                  </span>
+                  </span>)}
                 </div>
               </div>
             </div>
@@ -490,20 +632,41 @@ const CustomerRegStepFirst = () => {
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3">
               {/* Driving license photo (front side) */}
               <div className="flex flex-col gap-2">
-                <span className="text-sm text-[#424B5A]">
-                  Жолоооны үнэмлэхний зураг (урд тал)
-                </span>
+                <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
+                  <span className="text-sm text-[#424B5A]">
+                    Жолоооны үнэмлэхний зураг (урд тал)
+                  </span>
+                  {formData.drivingFront ? (
+                    <button className="absolute top-1 z-[999] right-[10px]"
+                      onClick={() => {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          drivingFront: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
+                </div>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
                   onClick={() => handleImageClick(drivingFrontRef)}
                   style={{ position: "relative" }}
                 >
                   <label htmlFor="drivingFront" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
+                    {formData.drivingFront ? (
+                      <img
+                        src={URL.createObjectURL(formData.drivingFront)}
+                        alt="Civil Code"
+                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                      />
+                    ) : (
+                      <img
+                        src="/assets/customer/employee/uploadIcon.svg"
+                        alt="uploadIcon"
+                        className="absolute inset-0 m-auto"
+                      />
+                    )}
                     <input
                       id="drivingFront"
                       type="file"
@@ -512,28 +675,54 @@ const CustomerRegStepFirst = () => {
                       onChange={(e) => handleFileChange(e, "drivingFront")}
                     />
                   </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Хуулах
-                  </span>
+                  {formData.drivingFront ? ("") : (
+                    <span className="text-xs text-[#005F7E] absolute bottom-4">
+                      Хуулах
+                    </span>)}
                 </div>
               </div>
 
               {/* Driving license photo (back) */}
               <div className="flex flex-col gap-2">
-                <span className="text-sm text-[#424B5A]">
-                  Жолоооны үнэмлэхний зураг (ар тал)
-                </span>
+                <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
+                  <span className="text-sm text-[#424B5A]">
+                    Жолоооны үнэмлэхний зураг (ар тал)
+                  </span>
+
+
+                  {formData.drivingBack ? (
+                    <button className="absolute top-1 z-[999] right-[10px]"
+                      onClick={() => {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          drivingBack: null,
+                        }));
+                      }}
+
+                    > <FaTrashAlt style={{ color: 'red' }} /></button>
+                  ) : ("")}
+
+
+                </div>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
                   onClick={() => handleImageClick(drivingBackRef)}
                   style={{ position: "relative" }} // Add position relative to container
                 >
-                  <label htmlFor="drivingBack" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
+                  <label htmlFor="drivingBack" className="cursor-pointer ">
+                    {formData.drivingBack ? (
+                      <img
+                        src={URL.createObjectURL(formData.drivingBack)}
+                        alt="Civil Code"
+                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                      />
+                    ) : (
+                      <img
+                        src="/assets/customer/employee/uploadIcon.svg"
+                        alt="uploadIcon"
+                        className="absolute inset-0 m-auto"
+                      />
+                    )}
                     <input
                       id="drivingBack"
                       type="file"
@@ -542,9 +731,10 @@ const CustomerRegStepFirst = () => {
                       onChange={(e) => handleFileChange(e, "drivingBack")}
                     />
                   </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Хуулах
-                  </span>
+                  {formData.drivingBack ? ("") : (
+                    <span className="text-xs text-[#005F7E] absolute bottom-4">
+                      Хуулах
+                    </span>)}
                 </div>
               </div>
             </div>
@@ -563,10 +753,25 @@ const CustomerRegStepFirst = () => {
               className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
               onClick={handleCreateCustomer}
             >
+
               Нэмэх
             </Button>
           </div>
         </div>
+
+        <ToastContainer
+          position="top-right" // Position in the top-right corner
+          autoClose={3000} // Auto-close after 3 seconds
+          hideProgressBar={false} // Show the progress bar
+          newestOnTop={true} // Show new notifications on top
+          closeOnClick // Close on click
+          rtl={false} // Right-to-left or left-to-right
+          pauseOnFocusLoss // Pause when the window loses focus
+          draggable // Allow the toast to be dragged
+          pauseOnHover // Pause when hovering over the toast
+        />
+
+
       </div>
     </>
   );

@@ -63,6 +63,7 @@ const ProfileSaveData: React.FC<ProfileSaveDataProps> = ({
                 type="submit"
                 className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
                 onClick={handleSave}
+                disabled={phoneNumber.length < 8}
               >
                 Хадгалах
               </Button>

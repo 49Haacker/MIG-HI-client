@@ -5,6 +5,9 @@ import { UnknownAction } from "@reduxjs/toolkit";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 import {
   verifyOtp,
   VerifyOtpResponse,
@@ -13,7 +16,7 @@ import {
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState<string | null>("");
-
+  const [loading , setLoading] = useState(false);
   const location = useLocation();
   const phoneNumber = location.state.phoneNumber;
 
@@ -46,6 +49,7 @@ const VerifyOtp = () => {
     }
 
     try {
+      setLoading(true);
       const actions = await dispatch(
         verifyOtp({
           phoneNumber: phoneNumber,
@@ -54,6 +58,10 @@ const VerifyOtp = () => {
       );
 
       const responseData = actions.payload as VerifyOtpResponse;
+
+      if(responseData){
+      setLoading(false);
+      }
 
       const userType = responseData.data.userType;
       // console.log(userType);
@@ -83,7 +91,7 @@ const VerifyOtp = () => {
           </h1>
 
           <p className="text-[#8CAAB1] font-normal text-[14px] leading-[18.03px]">
-            Таны утсанд ирсэн 6 оронтой кодыг оруулна <br /> уу!
+            Таны утсанд ирсэн 6 оронтой кодыг оруулна <br className="hidden d-md-block" /> уу!
           </p>
         </div>
 
@@ -112,9 +120,17 @@ const VerifyOtp = () => {
         <div className="flex items-center w-full mt-4">
           <Button
             onClick={handleVeifyOtp}
-            className="text-[#FFFFFF] font-bold text-2xl bg-[#005F7E] hover:bg-[#006F8F] w-full"
+            className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#006F8F] font-bold text-[16px] leading-[20.03px] w-full text-center"
+            disabled={loading}
           >
-            Нэвтрэх
+             {loading ? (
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <CircularProgress size={20} color="inherit" /> 
+                <Box ml={1}>Ачааллаж байна...</Box> {/* You can add a loading message */}
+              </Box>
+              ) : (
+                'Нэвтрэх'
+              )}
           </Button>
         </div>
       </div>
