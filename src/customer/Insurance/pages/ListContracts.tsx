@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import FullPageLoader from "@/components/ui/FullPageLoader";
 
 import * as React from "react";
+import axios from "@/axios"
 import {
   Select,
   SelectContent,
@@ -32,10 +34,54 @@ const ListContracts = () => {
   const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(true);
+  // const [error, setError] = React.useState(null);
 
   // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
     setInsuranceData(insuranceDataJson);
+  }, []);
+
+
+  React.useEffect(() => {
+    // Fetch data with axios
+    axios
+      .get( `Guarantee/List?RegisterNo=НМ66040816`) // Sample public API
+      .then((response) => {
+        console.info("respons axios", response.data);
+        setLoading(false); // Set loading to false once data is fetched
+      })
+      .catch(() => {
+        // setError(error.message); // Handle errorKC
+        setLoading(false);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    // Fetch data with axios
+    axios
+      .get( `Guarantee/List?RegisterNo=НМ66040816`) // Sample public API
+      .then((response) => {
+        console.info("Insurance List", response.data);
+        setLoading(false); // Set loading to false once data is fetched
+      })
+      .catch(() => {
+        // setError(error.message); // Handle error
+        setLoading(false);
+      });
+  }, []);
+  React.useEffect(() => {
+    // Fetch data with axios
+    axios
+      .get( `Quits/List?SearchTypeId=2&SearchValue=НМ66040816`) // Sample public API
+      .then((response) => {
+        console.info("Get Claims", response.data);
+        setLoading(false); // Set loading to false once data is fetched
+      })
+      .catch(() => {
+        // setError(error.message); // Handle error
+        setLoading(false);
+      });
   }, []);
 
   const handleTypeChange = (value: string) => {
@@ -47,9 +93,14 @@ const ListContracts = () => {
     ? insuranceData.filter((insurance) => insurance.status === selectedType)
     : insuranceData;
 
+
+
+
+
   return (
     <>
       <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
+        <FullPageLoader isLoading={loading} />
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
           <div className="grid grid-cols-8 sm:grid-cols-7 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
             {/* Product name */}

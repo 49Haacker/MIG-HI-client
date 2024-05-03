@@ -12,9 +12,9 @@ export default defineConfig({
   },
 
   // here set the proxy serve which not come the cros error
-  // server: {
-  //   proxy: {
-  //     "/api": "http://localhost:3011",
-  //   },
-  // },
+  server: {
+    proxy: {
+      "/api": "http://202.131.231.212:93",
+    },
+  },
 });
