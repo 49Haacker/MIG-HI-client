@@ -114,7 +114,7 @@ const SideNavbar = () => {
         {/* logout section */}
         <div className="">
           <Link
-            to={"/admin"}
+            to={"/"}
             className="flex items-center gap-2"
             onClick={handleLogout}
           >

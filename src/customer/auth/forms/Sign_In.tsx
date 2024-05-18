@@ -25,7 +25,7 @@ interface ResponseData {
 const Sign_In = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [notification, setNotification] = useState<Notification | null>(null);
+  //const [notification, setNotification] = useState<Notification | null>(null);
   localStorage.removeItem("phNo");
   const [error, setError] = useState<string>("");
   const [loading , setLoading] = useState(false);
@@ -91,7 +91,7 @@ const Sign_In = () => {
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}     
           </div>
-          {notification && <Notify message={notification.message} type={notification.type} />}
+          {/* {notification && <Notify message={notification.message} type={notification.type} />} */}
           <div className="flex items-center w-full mt-4">
           <Button
             onClick={handleLogin}

@@ -83,6 +83,18 @@ const TopNavbarSmall = () => {
     }
   };
 
+
+
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  useEffect(() => {
+    // Get the current user's login number from local storage
+    const currentUserPhoneNumber = localStorage.getItem('phNo');
+    if (currentUserPhoneNumber) {
+      setPhoneNumber(currentUserPhoneNumber);
+    }
+  }, []);
+
   return (
     <>
       <div className="w-full flex flex-col gap-1">
@@ -99,7 +111,7 @@ const TopNavbarSmall = () => {
               alt="topNavBarUser"
               className="w-[26.67px] h-[26.67px]"
             />
-            <p className="text-sm text-[#D7D1CB]">9900 8800</p>
+            <p className="text-sm text-[#D7D1CB]">{phoneNumber}</p>
           </div>
         </div>
 

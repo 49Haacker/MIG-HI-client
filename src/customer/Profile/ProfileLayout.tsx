@@ -46,7 +46,7 @@ const ProfileLayout = () => {
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[580px] overflow-y-scroll custom-scroller-design">
+        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[calc(100% - 404px)] overflow-y-scroll custom-scroller-design">
           <Outlet />
         </div>
       </div>

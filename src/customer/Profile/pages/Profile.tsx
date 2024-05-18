@@ -106,13 +106,13 @@ const Profile = () => {
     
   
       console.log("Profile updated successfully", response);
-    } catch (error) {
+    } catch (Error) {
       console.error("Error updating profile:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Error updating profile");
-      }
+      // if (error.response && error.response.data && error.response.data.message) {
+      //   toast.error(error.response.data.message);
+      // } else {
+        toast.error("Something went wrong!");
+      // }
     }
   };
   
@@ -154,18 +154,31 @@ const Profile = () => {
                 Регистрийн дугаар
               </h1>
               <div className="flex gap-4 w-full">
-                <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
-                  {/* A */}
-                  {customerData.RegisterNo.slice(0, 1)}
-                </Button>
-                <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
-                  {/* A */}
-                  {customerData.RegisterNo.slice(1, 2)}
-                </Button>
-                <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start w-full">
-                  {/* 12345678 */}
-                  {customerData.RegisterNo.slice(2)}
-                </Button>
+
+              
+              {customerData.IsForigner !== null && customerData.IsForigner === false  ? (
+                <>
+                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
+                    {customerData.RegisterNo.slice(0, 1)}
+                  </Button>
+                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
+                    {customerData.RegisterNo.slice(1, 2)}
+                  </Button>
+                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start w-full">
+                    {customerData.RegisterNo.slice(2)}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
+                    {customerData.RegisterNo}
+                  </Button>
+                </>
+              )}
+
+         
+          
+
               </div>
             </div>
           </div>

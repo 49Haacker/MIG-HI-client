@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import axios from "@/axios"
 
 import {
   Select,
@@ -38,6 +39,16 @@ const ReimbursementHistory = () => {
   React.useEffect(() => {
     setReimbursementData(ReimbursementDataJson);
   }, []);
+
+  React.useEffect(() => {
+
+    axios.get('Quits/List?SearchTypeId=3&SearchValue=all').then((res) => {
+
+        console.log(res.data);
+
+    }).then().catch();
+
+  } ,[]);
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);

@@ -68,7 +68,8 @@ const VerifyOtp = () => {
 
       if (responseData.statusCode === 200) {
         // navigate("/admin/registration/customer-registration");
-        if (userType === "1") {
+        localStorage.setItem('user',userType );
+        if (userType === "1" || userType === "2") {
           navigate("/admin/registration/customer-registration");
         } else {
           navigate("/insurance-contract/list-contracts");

@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef } from "react";
-
+import axios from "@/axios"
 const StepThird = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -15,6 +15,40 @@ const StepThird = () => {
       console.log("Selected file:", selectedFile);
     }
   };
+
+  const SendClaim = async () =>{
+    try {
+        // Your JSON data
+        const data = {
+            "f1": "",  // Reimbursement number
+            f2: 3,   // Contract Type Number
+            f3: 1858548,  // ContractID
+            f4: 0,   // ContractDetailId
+            f5: "1104290003",  // ProductID
+            f6: "2024-03-23",  // current date
+            f7: "2024-03-30",  // date of claim
+            f8: "2024-03-30",  // date of Case date
+            f9: "1",  // case number
+            f10: "",  // Plate number
+            f11: "99010990",  // Phone number
+            f12: "test",  // Additional information
+            f13: 100000,  // Claimed amount
+            QUITSIMAGES: [
+                {"F1": "1", "F2": "TEST", "F3": "IMAGE.PNG"},
+                {"F1": "2", "F2": "TEST 1", "F3": "IMAGE1.PNG"}
+            ]
+        };
+
+        // Send POST request to the API
+        const response = await axios.post('Quits/Insert', data);
+
+        // Handle response
+        console.log(response.data);
+    } catch (error) {
+        // Handle error
+        console.error('Error fetching data:', error);
+    }};
+
 
   return (
     <>
@@ -370,7 +404,7 @@ const StepThird = () => {
         </div>
 
         <div className="flex justify-end w-full my-8">
-          <button className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#004F6F] p-2 rounded-md w-full sm:w-1/6">
+          <button onClick={() => SendClaim()} className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#004F6F] p-2 rounded-md w-full sm:w-1/6">
             Илгээх
           </button>
         </div>

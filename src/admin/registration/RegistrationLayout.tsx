@@ -7,6 +7,8 @@ const RegistrationLayout = () => {
   const [activeTab, setActiveTab] = useState<string>(location.pathname);
   const navigate = useNavigate();
 
+  const CurrantUserRole = localStorage.getItem('user');
+
   const privateRoutes = ["/admin/registration"];
 
   const isPrivateRoute = privateRoutes.some((route) =>
@@ -65,26 +67,27 @@ const RegistrationLayout = () => {
           </Link>
 
           {/* List */}
+          {CurrantUserRole === '2' ? (
           <Link
-            to={"/admin/registration/list"}
+            to="/admin/registration/list"
             onClick={() => handleTabClick("/admin/registration/list")}
             className={`${
-              activeTab === "/admin/registration/list"
-                ? "bg-[#FFFFFF]"
-                : "bg-[#F9F9F9]"
+              activeTab === "/admin/registration/list" ? "bg-[#FFFFFF]" : "bg-[#F9F9F9]"
             } hover:bg-[#FFFFFF] rounded-t-2xl p-3 min-w-max lg:min-w-0`}
           >
             <h4 className="text-[16px] leading-[16px] text-[#424B5A] font-medium">
-              {location.pathname === "/admin/registration/list"
-                ? "Жагсаалт"
-                : "Харилцагчийн дэлгэрэнгүй"}
-              {/* List */}
+              {location.pathname === "/admin/registration/list" ? "Жагсаалт" : "Харилцагчийн дэлгэрэнгүй"}
             </h4>
           </Link>
+        ) : null}
+
+
+
+      
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[580px] overflow-y-scroll custom-scroller-design">
+        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[100%] overflow-y-scroll custom-scroller-design">
           <Outlet />
         </div>
       </div>

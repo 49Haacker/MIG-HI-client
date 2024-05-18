@@ -26,8 +26,8 @@ const formSchema = z.object({
   name: z.string().min(3, {
     message: "Name must be at least 3 characters.",
   }),
-  registerNumber: z.string().min(5, {
-    message: "Register number must be at least 5 characters.",
+  registerNumber: z.string().min(8, {
+    message: "Register number must be at least 8 characters.",
   }),
   phoneNumber: z.string().min(8, {
     message: "Phone number must be at least 8 characters.",
@@ -39,7 +39,7 @@ const EmployeeRegistration = () => {
   const [selectedLater2, setSelectedLater2] = useState<string>("");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
   const [isOpen2, setIsOpen2] = useState<boolean>(false);
-  const [isLoading, setisLoading] = useState<boolean>(false);
+ 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,10 +74,11 @@ const EmployeeRegistration = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    
     const combinedValue = {
       LastName: values.lastName,
       Name: values.name,
-      RegisterNumber: selectedLater1 + selectedLater2 + values.registerNumber,
+      RegisterNumber: selectedLater1 + selectedLater2 + values.registerNumber.replace(/\D/g, '').slice(0, 8),
       PhoneNo: values.phoneNumber,
     };
 
@@ -87,14 +88,18 @@ const EmployeeRegistration = () => {
       await axios.post("admin", combinedValue);
 
       // console.log(response);
-      toast.success("Manager regester successfully");
+      toast.success("Manager register successfully");
       setSelectedLater1("");
       setSelectedLater2("");
     } catch (error) {
-      console.log("Manager regester error: ", error.response.data.errors[0].msg);
-      toast.error(error.response.data.errors[0].msg);
-
+      // if (error.response && error.response.errors && error.response.errors.length > 0) {
+        // toast.error(error.response.data.errors[0].msg);
+        toast.error("please enter correct details !");
+      // } else {
+      //   toast.error("An error occurred.");
+      // }
     }
+    
   };
 
   return (
@@ -281,6 +286,9 @@ const EmployeeRegistration = () => {
                               <Input
                                 placeholder="Дугаар"
                                 {...field}
+                                maxLength={8}
+                                pattern="[0-9]*"
+                              
                                 className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                               />
                             </FormControl>

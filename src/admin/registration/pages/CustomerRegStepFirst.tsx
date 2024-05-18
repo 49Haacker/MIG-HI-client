@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 import { useRef, useState } from "react";
 import axios from "@/axios";
+// import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { FaTrashAlt } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -85,6 +86,9 @@ const CustomerRegStepFirst = () => {
   };
 
   const handleInputChange = (value: string, fieldName: string) => {
+    if (fieldName === "identityNumber") {
+      value = value.replace(/\D/g, '').slice(0, 8);
+    }
     setInputValues((prevState) => ({
       ...prevState,
       [fieldName]: value,
@@ -382,6 +386,7 @@ const CustomerRegStepFirst = () => {
                   <div className="flex w-full">
                     <Input
                       placeholder="Дугаар"
+                      type="number"
                       className="text-[#424B5A] font-medium text-[14px] leading-[14px] placeholder:text-[#B3CFD8]"
                       value={inputValues.identityNumber}
                       onChange={(e) =>
@@ -450,8 +455,8 @@ const CustomerRegStepFirst = () => {
                         <img
                           src={URL.createObjectURL(formData.civilCode)}
                           alt="Civil Code"
-                          className="h-full w-full object-cover   w-[200px] h-[100px]  "
-                          onChange={(e) => handleFileChange(e,"civilCode")}
+                          className=" object-cover   w-[200px] h-[100px]  "
+                          // onChange={(e) => handleFileChange(e, "civilCode")}
                         />
 
                       </>
@@ -538,8 +543,8 @@ const CustomerRegStepFirst = () => {
                         <img
                           src={URL.createObjectURL(formData.identityCard)}
                           alt="Civil Code"
-                          className="h-full w-full object-cover   w-[200px] h-[100px]  "
-                          onChange={(e) => handleFileChange(e, "civilCode")}
+                          className=" object-cover   w-[200px] h-[100px]  "
+                          // onChange={(e) => handleFileChange(e, "civilCode")}
                         />
 
                       </>
@@ -602,7 +607,7 @@ const CustomerRegStepFirst = () => {
                       <img
                         src={URL.createObjectURL(formData.vehicleCertificate)}
                         alt="Civil Code"
-                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                        className=" object-cover  w-[200px] h-[100px]  "
                       />
                     ) : (
                       <img
@@ -658,7 +663,7 @@ const CustomerRegStepFirst = () => {
                       <img
                         src={URL.createObjectURL(formData.drivingFront)}
                         alt="Civil Code"
-                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                        className=" object-cover  w-[200px] h-[100px]  "
                       />
                     ) : (
                       <img
@@ -714,7 +719,7 @@ const CustomerRegStepFirst = () => {
                       <img
                         src={URL.createObjectURL(formData.drivingBack)}
                         alt="Civil Code"
-                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
+                        className=" object-cover  w-[200px] h-[100px]  "
                       />
                     ) : (
                       <img

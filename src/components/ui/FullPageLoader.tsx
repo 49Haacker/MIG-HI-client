@@ -2,7 +2,11 @@ import React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-const FullPageLoader = ({ isLoading }) => {
+interface FullPageLoaderProps {
+  isLoading: boolean;
+}
+
+const FullPageLoader: React.FC<FullPageLoaderProps> = ({ isLoading }) => {
   if (!isLoading) {
     return null; // Return null if not loading
   }

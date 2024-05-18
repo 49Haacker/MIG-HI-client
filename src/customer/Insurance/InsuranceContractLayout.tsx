@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { InsuranceProvider } from '@/customer/Context/InsuranceData';  
 import "@/shared-css/CustomScroller.css";
 
 const InsuranceContract = () => {
@@ -54,8 +55,11 @@ const InsuranceContract = () => {
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF] w-full px-6 py-9 lg:h-[580px] overflow-y-scroll custom-scroller-design">
-          <Outlet />
+        <div className="flex bg-[#FFFFFF] w-full px-6 py-9 lg:h-[600px] overflow-y-scroll custom-scroller-design">
+          <InsuranceProvider>
+            <Outlet />
+          </InsuranceProvider>
+          
         </div>
       </div>
     </>
