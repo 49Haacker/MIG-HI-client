@@ -56,7 +56,7 @@ const InsuranceContract = () => {
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF] w-full px-6 py-9 lg:h-[580px] overflow-y-scroll custom-scroller-design">
+        <div className="flex bg-[#FFFFFF] w-full px-6 py-9 lg:h-[100%] overflow-y-scroll custom-scroller-design">
           <Outlet />
         </div>
       </div>

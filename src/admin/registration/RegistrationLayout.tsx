@@ -27,7 +27,7 @@ const RegistrationLayout = () => {
 
   return (
     <>
-      <div className="my-3 mx-6">
+      <div className="my-3 mx-6 h-[100%]">
         {/* tab on top */}
         <div className="flex items-center gap-2 overflow-x-scroll lg:overflow-hidden w-[16.5em] sm:w-[29.5em] lg:w-full">
           {/* Customer registration */}
@@ -87,7 +87,8 @@ const RegistrationLayout = () => {
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[580px] overflow-y-scroll custom-scroller-design">
+       
+        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full dynamic-height overflow-y-scroll custom-scroller-design">
           <Outlet />
         </div>
       </div>
