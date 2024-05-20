@@ -11,21 +11,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import ReimbursementDataJson from "../../../../json/reimbursementHistory.json";
+import FullPageLoader from "@/components/ui/FullPageLoader";
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
 
 interface EmployeeData {
-  name: string;
-  product_name: string;
-  userId: string;
+  firstName: string;
+  productName: string;
+  registerNo: string;
   country: string;
   city: string;
-  startDate: string;
+  beginDate: string;
   endDate: string;
-  amount: string;
-  status: string;
+  invoiceAmount: string;
+  statusName: string;
 }
 
 const ReimbursementHistory = () => {
@@ -34,37 +33,53 @@ const ReimbursementHistory = () => {
   >([]);
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
-
-  // if api come then in useEffect make a function and call that api and out of function call that function
+  const [registerNumber , setRegisterNumber] = React.useState<string | null>('');
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  
   React.useEffect(() => {
-    setReimbursementData(ReimbursementDataJson);
-  }, []);
+    setLoading(true); 
+    axios.get('current-customer')
+      .then((response) => {
+        setRegisterNumber(response.data.customer.RegisterNo);
+        setLoading(false);
+        console.info(error);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []); 
 
   React.useEffect(() => {
-
-    axios.get('Quits/List?SearchTypeId=3&SearchValue=all').then((res) => {
-
-        console.log(res.data);
-
-    }).then().catch();
-
-  } ,[]);
+    if (registerNumber) {
+      axios.get(`Quits/List?SearchTypeId=3&SearchValue=${registerNumber}`)
+        .then((res) => {
+          console.log(res.data);
+          setReimbursementData(res.data.quitsLists);
+        })
+        .catch((error) => {
+          console.error("Error fetching quits list:", error);
+        });
+    }
+  }, [registerNumber]);
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);
-    // console.log("value = ", value);
   };
 
   const filteredData = selectedType
     ? reimbursementData.filter(
-        (reimbursement) => reimbursement.status === selectedType
+        (reimbursement) => reimbursement.statusName === selectedType
       )
     : reimbursementData;
 
   return (
     <>
+      <FullPageLoader isLoading={loading} />
+
       {/* pending this table only  */}
-      {reimbursementData.length === 0 ? (
+      {reimbursementData.length > 0 ? (
         <div className="flex flex-col justify-center items-center w-full">
           <img
             src="/assets/customer/employee/emptyClaimHistory.svg"
@@ -167,39 +182,39 @@ const ReimbursementHistory = () => {
                 <div
                   key={index}
                   className={`grid grid-cols-8 sm:grid-cols-8 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
-                    (reimbursement.status === "Хянаж байгаа" ||
-                      reimbursement.status === "Төлөгдсөн") &&
+                    (reimbursement.statusName === "Хянаж байгаа" ||
+                      reimbursement.statusName === "Төлөгдсөн") &&
                     "bg-[#F3F7F9]"
                   }`}
                 >
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] col-span-2">
-                    {reimbursement.product_name}
+                    {reimbursement.productName}
                   </span>
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {reimbursement.startDate}
+                    {reimbursement.beginDate}
                   </span>
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
                     {reimbursement.endDate}
                   </span>
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {reimbursement.amount}
+                    {reimbursement.invoiceAmount}
                   </span>
 
                   <div className=" w-full min-[1024px]:col-span-2">
                     <Button
                       className={`rounded-full h-[24px] ${
-                        reimbursement.status === "Хүлээн авсан"
+                        reimbursement.statusName === "Хүлээн авсан"
                           ? "bg-[#E6EFF2] hover:bg-[#E6EFF3] text-[#005F7E]"
-                          : reimbursement.status === "Хянаж байгаа"
+                          : reimbursement.statusName === "Хянаж байгаа"
                           ? "bg-[#F4926829] hover:bg-[#F4926829] text-[#F49268]"
-                          : reimbursement.status === "Төлбөр хийгдэж байгаа"
+                          : reimbursement.statusName === "Төлбөр хийгдэж байгаа"
                           ? "bg-[#AED03829] hover:bg-[#AED03829] text-[#AED038]"
-                          : reimbursement.status === "Төлөгдсөн"
+                          : reimbursement.statusName === "Төлөгдсөн"
                           ? "bg-[#00A27B29] hover:bg-[#00A27B29] text-[#00A27B]"
                           : ""
                       }`}
                     >
-                      {reimbursement.status}
+                      {reimbursement.statusName}
                     </Button>
                   </div>
 

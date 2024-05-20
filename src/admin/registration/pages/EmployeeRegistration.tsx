@@ -76,8 +76,8 @@ const EmployeeRegistration = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     
     const combinedValue = {
-      LastName: values.lastName,
-      Name: values.name,
+      LastName: values.lastName.toUpperCase(),
+      Name: values.name.toUpperCase(),
       RegisterNumber: selectedLater1 + selectedLater2 + values.registerNumber.replace(/\D/g, '').slice(0, 8),
       PhoneNo: values.phoneNumber,
     };
@@ -124,6 +124,8 @@ const EmployeeRegistration = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
+                          type="text"
+
                             placeholder="Овог оруулах..."
                             {...field}
                             className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
@@ -147,6 +149,7 @@ const EmployeeRegistration = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
+                          type="text"
                             placeholder="Нэр оруулах..."
                             {...field}
                             className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
@@ -284,12 +287,13 @@ const EmployeeRegistration = () => {
                           <FormItem>
                             <FormControl>
                               <Input
+                              
                                 placeholder="Дугаар"
                                 {...field}
                                 maxLength={8}
                                 pattern="[0-9]*"
                               
-                                className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                                className="text-[#424B5A] uppercase	  placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                               />
                             </FormControl>
                             <FormMessage />
@@ -313,6 +317,8 @@ const EmployeeRegistration = () => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          type="text"
+
                           placeholder="Утасны дугаар оруулах..."
                           {...field}
                           className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"

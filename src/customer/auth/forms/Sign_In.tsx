@@ -51,8 +51,8 @@ const Sign_In = () => {
       if(responseData){
         setLoading(false);
       }
-      const storeOtp = responseData.data.otp;
-      localStorage.setItem("otp", storeOtp);
+      
+      
       localStorage.setItem("phNo", responseData.data.phoneNo);
 
 

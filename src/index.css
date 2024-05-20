@@ -66,6 +66,11 @@
   }
 }
 
+input[type="text"],
+textarea {
+  text-transform: uppercase;
+}
+
 @layer base {
   * {
     @apply border-border;

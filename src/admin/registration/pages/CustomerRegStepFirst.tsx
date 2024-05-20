@@ -91,7 +91,7 @@ const CustomerRegStepFirst = () => {
     }
     setInputValues((prevState) => ({
       ...prevState,
-      [fieldName]: value,
+      [fieldName]: value.toUpperCase(),
     }));
   };
 
@@ -222,6 +222,7 @@ const CustomerRegStepFirst = () => {
                   Овог
                 </Label>
                 <Input
+                  type="text"
                   placeholder="Овог оруулах..."
                   className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                   value={inputValues.lastName}
@@ -236,6 +237,7 @@ const CustomerRegStepFirst = () => {
                   Нэр
                 </Label>
                 <Input
+                  type="text"
                   placeholder="Нэр оруулах..."
                   className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                   value={inputValues.firstName}
@@ -250,6 +252,7 @@ const CustomerRegStepFirst = () => {
                   Утасны дугаар
                 </Label>
                 <Input
+                 type="text"
                   placeholder="Утасны дугаар оруулах..."
                   className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                   value={inputValues.phoneNumber}

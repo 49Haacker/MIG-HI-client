@@ -15,9 +15,9 @@ const CompensationMaterials = () => {
       <div className="flex gap-8 flex-col justify-between w-full">
         {/* top tabs here */}
         <div className="flex gap-6 flex-col w-full">
-          <div className="flex gap-4 items-center w-full">
+          <div className="flex gap-4 items-start w-full">
             {/* step 1 */}
-            <div className="flex flex-col gap-4 w-1/2">
+            <div className="flex flex-col gap-4 items-start w-1/2">
               <hr className={`bg-[#005F7E] w-full h-[4px]`} />
               <div className="flex gap-2 items-center">
                 {(currentStep === 2 || currentStep === 3) && (

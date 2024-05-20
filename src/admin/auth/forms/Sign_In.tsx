@@ -39,8 +39,8 @@ const Sign_In = () => {
       );
       const responseData = action.payload as ResponseData;
 
-      const storeOtp = responseData.data.otp;
-      localStorage.setItem("otp", storeOtp);
+      // const storeOtp = responseData.data.otp;
+      // localStorage.setItem("otp", storeOtp);
       
       localStorage.setItem("phNo", responseData.data.phoneNo);
       const res_number = responseData.data.phoneNo;

@@ -63,19 +63,20 @@ const VerifyOtp = () => {
       setLoading(false);
       }
 
-      const userType = responseData.data.userType;
+      const userType = responseData?.data.userType ? responseData?.data.userType : null;
       // console.log(userType);
 
-      if (responseData.statusCode === 200) {
+      if (responseData?.statusCode === 200) {
         // navigate("/admin/registration/customer-registration");
-        localStorage.setItem('user',userType );
+        localStorage.setItem('user',userType ? userType : '');
         if (userType === "1" || userType === "2") {
           navigate("/admin/registration/customer-registration");
         } else {
           navigate("/insurance-contract/list-contracts");
         }
       } else {
-        console.error("OTP verification failed");
+        setError("OTP is Invalid !!");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
