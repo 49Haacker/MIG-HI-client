@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "@/axios";
 import * as React from "react";
-
+import ProfileSaveData from "@/customer/model/ProfileSaveData";
+import { ToastContainer, toast } from 'react-toastify';
 interface Manager {
   id: number;
   UserId: number | null;
@@ -38,14 +39,17 @@ interface ApiResponse {
 const Profile = () => {
   const [adminProfile, setAdminProfile] = React.useState<ApiResponse | null>(null); // State to store profile data
 
-  const parsePhoneNumber = (phoneNo: string) => {
-    const leadingAlphabets = phoneNo.match(/^[A-Za-z]+/); // Extracts leading alphabets
-    const remainingDigits = phoneNo.replace(leadingAlphabets?.[0] ?? "", ""); // Removes leading alphabets
+  const parseRegisterNumber = (RegNo: string) => {
+    const firstTwoDigits = RegNo.substring(0, 1); // Extracts first two digits
+    const middle = RegNo.substring(1, 2); // Extracts first two digits
+    const remainingDigits = RegNo.substring(2); // Extracts remaining digits
     return {
-      leadingAlphabets: leadingAlphabets?.[0] || "",
+      firstTwoDigits,
+      middle,
       remainingDigits,
     };
-  };
+};
+
 
   // Fetch admin profile from the API
   const fetchAdminProfile = async () => {
@@ -61,8 +65,13 @@ const Profile = () => {
   const [phoneNumber, setPhoneNumber] = React.useState("");
 
   // Event handler to capture changes in the input field
-  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber(e.target.value); // Update the state with the new value
+ 
+  const handlePhoneNumberChange = (newPhoneNumber: string) => {
+   
+      setPhoneNumber(
+
+        newPhoneNumber
+    );
   };
 
   // Fetch profile when the component mounts
@@ -71,7 +80,29 @@ const Profile = () => {
   }, []);
 
 
-  const regNumber = adminProfile?.manager ? parsePhoneNumber(adminProfile.manager.RegisterNumber) : null;
+  const updateNumber = async ()=>{
+    try{
+    const formData = new FormData();
+    formData.append("PhoneNo", phoneNumber || "");
+    const response = await axios.post("admin-edit-profile", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if(response){
+    toast.success("Profile updated successfully");
+    }
+  }
+  catch(error){
+    toast.error("Somthing Wrong !!");
+  }
+
+  } 
+
+  
+
+
+  const regNumber = adminProfile?.manager ? parseRegisterNumber(adminProfile.manager.RegisterNumber) : null;
 
   return (
     <>
@@ -108,17 +139,22 @@ const Profile = () => {
               </h1>
               <div className="flex gap-4 w-full">
 
-              {regNumber?.leadingAlphabets.split("").map((letter, index) => (
-              <Button
-                key={index}
-                className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start"
+              {regNumber?.firstTwoDigits && (
+              <button
+                className="leading-[14px] flex justify-center items-center bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] py-2 px-4 rounded"
               >
-                {letter}
-              </Button>
-            ))}
-
+                {regNumber.firstTwoDigits}
+              </button>
+            )}
+          {regNumber?.middle && (
+              <button
+                className="leading-[14px] flex justify-center items-center bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] py-2 px-4 rounded"
+              >
+                {regNumber.firstTwoDigits}
+              </button>
+            )}
             <Button
-              className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start w/full"
+              className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-center w/full"
             >
               {regNumber?.remainingDigits || ""}
             </Button>
@@ -134,28 +170,43 @@ const Profile = () => {
               type="text" // Input type can be text to allow for flexibility in user input
               placeholder="99990000" // Placeholder text
               value={phoneNumber} // Bind state to the input
-              onChange={handlePhoneNumberChange} // Update state on change
+             // onChange={handlePhoneNumberChange} // Update state on change
               className="w-full" // Additional class for styling
+              disabled
             />
-
-              <img
-                src="/assets/customer/profile/editIcon.svg"
-                alt="editIcon"
-                className="absolute right-2 top-2"
+            
+            <ProfileSaveData
+                number={phoneNumber}
+                onPhoneNumberChange={handlePhoneNumberChange}
               />
             </div>
+           
           </div>
         </div>
 
         <div className="flex flex-col mt-12">
           <div className="flex justify-end w-full">
-            <Button className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]">
+            <Button className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px]"
+              onClick={updateNumber}
+            >
               Хадгалах
             </Button>
             {/* Save */}
           </div>
         </div>
+        <ToastContainer
+          position="top-right" // Position in the top-right corner
+          autoClose={3000} // Auto-close after 3 seconds
+          hideProgressBar={false} // Show the progress bar
+          newestOnTop={true} // Show new notifications on top
+          closeOnClick // Close on click
+          rtl={false} // Right-to-left or left-to-right
+          pauseOnFocusLoss // Pause when the window loses focus
+          draggable // Allow the toast to be dragged
+          pauseOnHover // Pause when hovering over the toast
+        />
       </div>
+
     </>
   );
 };

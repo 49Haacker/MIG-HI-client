@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import listOfContactDataJson from "../../../../json/adminListOfContactData.json";
+// import listOfContactDataJson from "../../../../json/adminListOfContactData.json";
 
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const ListContracts = () => {
 
   // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
-    setListOfContactData(listOfContactDataJson);
+    setListOfContactData([]);
   }, []);
 
   const handleTypeChange = (value: string) => {

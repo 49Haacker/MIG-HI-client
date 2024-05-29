@@ -35,6 +35,14 @@ const formSchema = z.object({
 });
 
 const EmployeeRegistration = () => {
+
+  const alphabet = [
+  
+    'А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','Ө','П','Р',
+    'С','Т','У','Ү','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я'
+
+  ];
+
   const [selectedLater1, setSelectedLater1] = useState<string>("");
   const [selectedLater2, setSelectedLater2] = useState<string>("");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
@@ -186,40 +194,29 @@ const EmployeeRegistration = () => {
 
                       {isOpen1 && (
                         <div
-                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          className="origin-top-right absolute right-0 mt-2 w-[20rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
                         >
-                          <div className="py-1" role="none">
-                            <button
-                              onClick={() => handleLaterSelect1("A")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              A
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("Б")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Б
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("B")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              B
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("Г")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Г
-                            </button>
+                            <div className="p-4   " role="none">
+                     
+                             <div className="grid grid-cols-5 gap-2  ">
+                                  {alphabet.map(letter => (
+                                    <button
+                                      key={letter}
+                                      onClick={() => handleLaterSelect1(letter)}
+                                      className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8]  border-opacity-40 shadow-sm bg-white px-5 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                                    >
+                                      {letter}
+                                    </button>
+                                    ))}
+
+                              </div>
+                            <button className="inline-flex mt-4   justify-center  rounded-md border border-[#B3CFD8] border-opacity-40 shadow-sm bg-white w-[100%]  px-4 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                             onClick={()=>{ setIsOpen1(false)}}
+                            >Xaax</button>
+                                    
                           </div>
                         </div>
                       )}
@@ -240,41 +237,30 @@ const EmployeeRegistration = () => {
 
                       {isOpen2 && (
                         <div
-                          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                          className="origin-top-right absolute right-0 mt-2 w-[20rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
                         >
-                          <div className="py-1" role="none">
+                            <div className="p-4   " role="none">
+                     
+                     <div className="grid grid-cols-5 gap-2  ">
+                          {alphabet.map(letter => (
                             <button
-                              onClick={() => handleLaterSelect2("A")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
+                              key={letter}
+                              onClick={() => handleLaterSelect2(letter)}
+                              className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8]  border-opacity-40 shadow-sm bg-white px-5 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
                             >
-                              A
+                              {letter}
                             </button>
-                            <button
-                              onClick={() => handleLaterSelect2("Б")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Б
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect2("B")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              B
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect2("Г")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Г
-                            </button>
-                          </div>
+                            ))}
+
+                      </div>
+                    <button className="inline-flex mt-4   justify-center  rounded-md border border-[#B3CFD8] border-opacity-40 shadow-sm bg-white w-[100%]  px-4 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                     onClick={()=>{ setIsOpen2(false)}}
+                    >Xaax</button>
+                            
+                  </div>
                         </div>
                       )}
                     </div>

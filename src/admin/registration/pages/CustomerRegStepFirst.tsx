@@ -2,17 +2,58 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
-
+  
 import { useRef, useState } from "react";
 import axios from "@/axios";
-// import { AxiosRequestConfig, AxiosResponse } from "axios";
+
 import { FaTrashAlt } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import FullPageLoader from './../../../components/ui/FullPageLoader';
+// import React from "react";
+
+//valdiation 
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const formSchema = z.object({
+  lastName: z.string().min(3, {
+    message: "Last name must be at least 3 characters.",
+  }),
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters.",
+  }),
+  RegisterNo: z.string().min(8, {
+    message: "Register number must be at least 8 characters.",
+  }),
+  phoneNumber: z.string().min(8, {
+    message: "Phone number must be at least 8 characters.",
+  }),
+});
 
 const CustomerRegStepFirst = () => {
+
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      lastName: "",
+      name: "",
+      RegisterNo: "",
+      phoneNumber: "",
+    },
+  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
@@ -21,10 +62,10 @@ const CustomerRegStepFirst = () => {
   const vehicleCertificateRef = useRef<HTMLInputElement>(null);
   const drivingFrontRef = useRef<HTMLInputElement>(null);
   const drivingBackRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string>("");
+  const [error] = useState<string>("");
 
 
-  const [formData, setFormData] = useState<{
+  let [formData, setFormData] = useState<{
     civilCode: File | null;
     identityCard: File | null;
     vehicleCertificate: File | null;
@@ -38,28 +79,41 @@ const CustomerRegStepFirst = () => {
     drivingBack: null,
   });
 
-  const [inputValues, setInputValues] = useState({
-    lastName: "",
-    firstName: "",
-    phoneNumber: "",
-    identityNumber: "",
-  });
+  
+
+  // const [ setInputValues] = useState({
+  //   lastName: "",
+  //   firstName: "",
+  //   phoneNumber: "",
+  //   RegisterNo: "",
+  // });
+
+  const alphabet = [
+  
+    'А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','Ө','П','Р',
+    'С','Т','У','Ү','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я'
+
+  ];
 
 
-  // interface FieldError {
-  //   location: string; // Where the error occurred (e.g., 'body')
-  //   msg: string; // Error message
-  //   path: string; // Field name
-  //   type: string; // Type of error
-  //   value: string; // The value that caused the error
-  // }
 
 
 
+  const handleDelete = (fieldName: string, inputRef: React.RefObject<HTMLInputElement>) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [fieldName]: null,
+    }));
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
+  
 
 
-  const [selectedLater1, setSelectedLater1] = useState<string>("");
-  const [selectedLater2, setSelectedLater2] = useState<string>("");
+
+  const [selectedLater1, setSelectedLater1] = useState<string>("P");
+  const [selectedLater2, setSelectedLater2] = useState<string>("Д");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
   const [isOpen2, setIsOpen2] = useState<boolean>(false);
 
@@ -83,16 +137,6 @@ const CustomerRegStepFirst = () => {
     if (isOpen1) {
       setIsOpen1(false);
     }
-  };
-
-  const handleInputChange = (value: string, fieldName: string) => {
-    if (fieldName === "identityNumber") {
-      value = value.replace(/\D/g, '').slice(0, 8);
-    }
-    setInputValues((prevState) => ({
-      ...prevState,
-      [fieldName]: value.toUpperCase(),
-    }));
   };
 
   const handleImageClick = (inputRef: React.RefObject<HTMLInputElement>) => {
@@ -120,44 +164,30 @@ const CustomerRegStepFirst = () => {
       }));
     }
   };
-
-  const handleCreateCustomer = () => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    if (
-      !inputValues.lastName ||
-      !inputValues.firstName ||
-      !inputValues.phoneNumber ||
-      !inputValues.identityNumber
-    ) {
-      setError("Please fill in all required fields.");
-      setIsLoading(false);
-      setTimeout(() => {
-        setError("");
-      }, 2000);
-      return;
+    if(!values.lastName && !values.name && !values.phoneNumber && !values.RegisterNo){
+
+      return setIsLoading(false);
     }
+    let RegisterNumber;
+
+    if (!isChecked) {
+        RegisterNumber = values.RegisterNo.slice(0, 8);
+    } else {
+        RegisterNumber = selectedLater1 + selectedLater2 + values.RegisterNo.slice(0, 8);
+    }
+    
+
+
 
     const data = new FormData();
-
-    // Map frontend input keys to backend keys
-    const inputKeyMap: Record<string, string> = {
-      lastName: "LastName",
-      firstName: "FirstName",
-      phoneNumber: "PhoneNo",
-      identityNumber: "RegisterNo",
-      isChecked: "IsForigner",
-    };
-
-    // Append mapped input values to FormData
-    Object.entries(inputValues).forEach(([key, value]) => {
-      const backendKey = inputKeyMap[key];
-      if (backendKey) {
-        data.append(backendKey, value);
-      }
-    });
-
-    // Append the value of the checkbox
+    data.append("LastName", values.lastName.toUpperCase());
+    data.append("FirstName", values.name.toUpperCase());
+    data.append("PhoneNo", values.phoneNumber.toUpperCase());
+    data.append("RegisterNo", RegisterNumber);
     data.append("IsForigner", isChecked ? "0" : "1");
+  
 
     // Map frontend image keys to backend keys
     const imageKeyMap: Record<string, string> = {
@@ -184,12 +214,12 @@ const CustomerRegStepFirst = () => {
         toast.success(response.data.message);
 
         // Reset input values to empty after successful submission
-        setInputValues({
-          lastName: "",
-          firstName: "",
-          phoneNumber: "",
-          identityNumber: "",
-        });
+        // setInputValues({
+        //   lastName: "",
+        //   firstName: "",
+        //   phoneNumber: "",
+        //   RegisterNo: "",
+        // });
 
         // Reset formData to empty after successful submission
         setFormData({
@@ -208,48 +238,78 @@ const CustomerRegStepFirst = () => {
       });
 
     // console.log("form was submited");
-  };
+    
+    
+};
+
+
+  
 
   return (
     <>
       <div className="flex flex-col justify-between w-full">
         <FullPageLoader isLoading={isLoading} />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col items-start w-full"
+          >
         <div className="flex flex-col w-full">
+      
           <div className="flex flex-col w-full">
             <div className="flex flex-col sm:flex-row gap-4 w-full mt-8">
               <div className="flex flex-col gap-2 w-full">
-                <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                  Овог
-                </Label>
-                <Input
-                  type="text"
-                  placeholder="Овог оруулах..."
-                  className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
-                  value={inputValues.lastName}
-                  onChange={(e) =>
-                    handleInputChange(e.target.value, "lastName")
-                  }
-                />
+       
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
+                          Овог <span className="text-[red]">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                          type="text"
+
+                            placeholder="Овог оруулах..."
+                            {...field}
+                            className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                
               </div>
 
               <div className="flex flex-col gap-2 w-full">
-                <Label className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[17.36px]">
-                  Нэр
-                </Label>
-                <Input
-                  type="text"
-                  placeholder="Нэр оруулах..."
-                  className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
-                  value={inputValues.firstName}
-                  onChange={(e) =>
-                    handleInputChange(e.target.value, "firstName")
-                  }
-                />
+                 <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
+                          Нэр <span className="text-[red]">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                          type="text"
+                            placeholder="Нэр оруулах..."
+                            {...field}
+                            className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
               </div>
 
               <div className="flex flex-col gap-2 w-full">
-                <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                  Утасны дугаар
+                {/* <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
+                  Утасны дугаар <span className="text-[red]">*</span>
                 </Label>
                 <Input
                  type="text"
@@ -259,6 +319,27 @@ const CustomerRegStepFirst = () => {
                   onChange={(e) =>
                     handleInputChange(e.target.value, "phoneNumber")
                   }
+                /> */}
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
+                        Утасны дугаар <span className="text-[red]">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+
+                          placeholder="Утасны дугаар оруулах..."
+                          {...field}
+                          className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
@@ -268,7 +349,7 @@ const CustomerRegStepFirst = () => {
                 htmlFor=""
                 className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]"
               >
-                Регистрийн дугаар
+                Регистрийн дугаар   <span className="text-[red]">*</span>  
               </Label>
 
               <div className="flex flex-col sm:flex-row gap-8 w-full">
@@ -290,40 +371,29 @@ const CustomerRegStepFirst = () => {
 
                       {isOpen1 && (
                         <div
-                          className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
+                             className="origin-top-right absolute z-[999999] left-0 mt-2 w-[22rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
                         >
-                          <div className="py-1" role="none">
-                            <button
-                              onClick={() => handleLaterSelect1("A")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              A
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("Б")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Б
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("B")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              B
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect1("Г")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Г
-                            </button>
+                          <div className="p-4   " role="none">
+                     
+                             <div className="grid grid-cols-5 gap-2  ">
+                                  {alphabet.map(letter => (
+                                    <button
+                                      key={letter}
+                                      onClick={() => handleLaterSelect1(letter)}
+                                      className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8]  border-opacity-40 shadow-sm bg-white px-5 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                                    >
+                                      {letter}
+                                    </button>
+                                    ))}
+
+                              </div>
+                            <button className="inline-flex mt-4   justify-center  rounded-md border border-[#B3CFD8] border-opacity-40 shadow-sm bg-white w-[100%]  px-4 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                             onClick={()=>{ setIsOpen1(false)}}
+                            >Xaax</button>
+                                    
                           </div>
                         </div>
                       )}
@@ -346,56 +416,56 @@ const CustomerRegStepFirst = () => {
 
                       {isOpen2 && (
                         <div
-                          className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
+                          className="origin-top-right  z-[999999] absolute left-0 mt-2 w-[22rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-100 z-10"
                           role="menu"
                           aria-orientation="vertical"
                           aria-labelledby="options-menu"
                         >
-                          <div className="py-1" role="none">
+                          
+                          <div className="p-4  " role="none">
+                     
+                     <div className="grid grid-cols-5 gap-2  ">
+                          {alphabet.map(letter => (
                             <button
-                              onClick={() => handleLaterSelect2("A")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
+                              key={letter}
+                              onClick={() => handleLaterSelect2(letter)}
+                              className="inline-flex justify-center w-full rounded-md border border-[#B3CFD8]  border-opacity-40 shadow-sm bg-white px-5 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
                             >
-                              A
+                              {letter}
                             </button>
-                            <button
-                              onClick={() => handleLaterSelect2("Б")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Б
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect2("B")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              B
-                            </button>
-                            <button
-                              onClick={() => handleLaterSelect2("Г")}
-                              className="block px-4 py-2 text-sm text-[#424B5A] hover:bg-gray-100 hover:text-[#424B5A] w-full text-left"
-                              role="menuitem"
-                            >
-                              Г
-                            </button>
+                            ))}
+
+                      </div>
+                    <button className="inline-flex mt-4   justify-center  rounded-md border border-[#B3CFD8] border-opacity-40 shadow-sm bg-white w-[100%]  px-4 py-2 text-sm font-medium text-[#424B5A] hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-[B3CFD8] focus:ring-[#B3CFD8]"
+                      onClick={()=>{ setIsOpen2(false)}}
+                    >Xaax</button>
+                            
+                  </div>
                           </div>
-                        </div>
+                       
                       )}
                     </div>
                   )}
 
                   <div className="flex w-full">
-                    <Input
-                      placeholder="Дугаар"
-                      type="number"
-                      className="text-[#424B5A] font-medium text-[14px] leading-[14px] placeholder:text-[#B3CFD8]"
-                      value={inputValues.identityNumber}
-                      onChange={(e) =>
-                        handleInputChange(e.target.value, "identityNumber")
-                      }
-                    />
+                  <FormField
+                        control={form.control}
+                        name="RegisterNo"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                              
+                                placeholder="Дугаар"
+                                {...field}
+                                maxLength={8}
+                                className="text-[#424B5A] uppercase	  placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                   </div>
                 </div>
 
@@ -423,6 +493,7 @@ const CustomerRegStepFirst = () => {
               </div>
             </div>
           </div>
+         
 
           {/* Civil Code, Identity Card, photo of vehicle */}
           <div className="w-full flex flex-col gap-2 my-3">
@@ -436,12 +507,14 @@ const CustomerRegStepFirst = () => {
 
                   {formData.civilCode ? (
                     <button className="absolute top-1 z-[999] right-[10px]"
-                      onClick={() => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          civilCode: null,
-                        }));
-                      }}
+                      // onClick={() => {
+                      //   setFormData((prevData) => ({
+                      //     ...prevData,
+                      //     civilCode: null,
+                      //   }));
+                      // }}
+                      onClick={() => handleDelete('civilCode', civilCodeRef)}
+
 
                     > <FaTrashAlt style={{ color: 'red' }} /></button>
                   ) : ("")}
@@ -459,7 +532,8 @@ const CustomerRegStepFirst = () => {
                           src={URL.createObjectURL(formData.civilCode)}
                           alt="Civil Code"
                           className=" object-cover   w-[200px] h-[100px]  "
-                          // onChange={(e) => handleFileChange(e, "civilCode")}
+                          onClick={(e) => e.stopPropagation()}
+
                         />
 
                       </>
@@ -471,6 +545,8 @@ const CustomerRegStepFirst = () => {
                           src="/assets/customer/employee/uploadIcon.svg"
                           alt="uploadIcon"
                           className="absolute inset-0 m-auto"
+                          onClick={(e) => e.stopPropagation()}
+
                         />
 
 
@@ -494,29 +570,6 @@ const CustomerRegStepFirst = () => {
 
               {/* Identity card (back) */}
               <div className="flex flex-col gap-2 w-full">
-                {/* <span className="text-sm text-[#424B5A]">
-                  Иргэний үнэмлэх (ар тал)
-                </span>
-                <div
-                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-md p-2 relative cursor-pointer"
-                  onClick={() => handleImageClick(identityCardRef)}
-                  style={{ position: "relative" }} // Add position relative to container
-                >
-                  <label htmlFor="identityCard" className="cursor-pointer">
-                    
-                    {formData.identityCard ? (
-                      <img
-                        src={URL.createObjectURL(formData.identityCard)}
-                        alt="Civil Code"
-                        className="h-full w-full object-cover  w-[200px] h-[100px]  "
-                      />
-                    ) : (
-                      <img
-                        src="/assets/customer/employee/uploadIcon.svg"
-                        alt="uploadIcon"
-                        className="absolute inset-0 m-auto"
-                      />
-                    )} */}
                 <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
                   <span className="text-sm text-[#424B5A]">
                     Иргэний үнэмлэх (ар тал)
@@ -524,12 +577,13 @@ const CustomerRegStepFirst = () => {
 
                   {formData.identityCard ? (
                     <button className="absolute top-1 z-[999] right-[10px]"
-                      onClick={() => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          identityCard: null,
-                        }));
-                      }}
+                      // onClick={() => {
+                      //   setFormData((prevData) => ({
+                      //     ...prevData,
+                      //     identityCard: null,
+                      //   }));
+                      // }}
+                      onClick={() => handleDelete('identityCard', identityCardRef)}
 
                     > <FaTrashAlt style={{ color: 'red' }} /></button>
                   ) : ("")}
@@ -547,7 +601,7 @@ const CustomerRegStepFirst = () => {
                           src={URL.createObjectURL(formData.identityCard)}
                           alt="Civil Code"
                           className=" object-cover   w-[200px] h-[100px]  "
-                          // onChange={(e) => handleFileChange(e, "civilCode")}
+                          onClick={(e) => e.stopPropagation()}
                         />
 
                       </>
@@ -559,6 +613,8 @@ const CustomerRegStepFirst = () => {
                           src="/assets/customer/employee/uploadIcon.svg"
                           alt="uploadIcon"
                           className="absolute inset-0 m-auto"
+                          onClick={(e) => e.stopPropagation()}
+
                         />
 
 
@@ -587,12 +643,14 @@ const CustomerRegStepFirst = () => {
                   </span>
                   {formData.vehicleCertificate ? (
                     <button className="absolute top-1 z-[999] right-[10px]"
-                      onClick={() => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          vehicleCertificate: null,
-                        }));
-                      }}
+                      // onClick={() => {
+                      //   setFormData((prevData) => ({
+                      //     ...prevData,
+                      //     vehicleCertificate: null,
+                      //   }));
+                      // }}
+                      onClick={() => handleDelete('vehicleCertificate', vehicleCertificateRef)}
+
 
                     > <FaTrashAlt style={{ color: 'red' }} /></button>
                   ) : ("")}
@@ -611,12 +669,16 @@ const CustomerRegStepFirst = () => {
                         src={URL.createObjectURL(formData.vehicleCertificate)}
                         alt="Civil Code"
                         className=" object-cover  w-[200px] h-[100px]  "
+                        onClick={(e) => e.stopPropagation()}
+
                       />
                     ) : (
                       <img
                         src="/assets/customer/employee/uploadIcon.svg"
                         alt="uploadIcon"
                         className="absolute inset-0 m-auto"
+                        onClick={(e) => e.stopPropagation()}
+
                       />
                     )}
 
@@ -646,12 +708,14 @@ const CustomerRegStepFirst = () => {
                   </span>
                   {formData.drivingFront ? (
                     <button className="absolute top-1 z-[999] right-[10px]"
-                      onClick={() => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          drivingFront: null,
-                        }));
-                      }}
+                      // onClick={() => {
+                      //   setFormData((prevData) => ({
+                      //     ...prevData,
+                      //     drivingFront: null,
+                      //   }));
+                      // }}
+                      onClick={() => handleDelete('drivingFront', drivingFrontRef)}
+
 
                     > <FaTrashAlt style={{ color: 'red' }} /></button>
                   ) : ("")}
@@ -667,12 +731,16 @@ const CustomerRegStepFirst = () => {
                         src={URL.createObjectURL(formData.drivingFront)}
                         alt="Civil Code"
                         className=" object-cover  w-[200px] h-[100px]  "
+                        onClick={(e) => e.stopPropagation()}
+
                       />
                     ) : (
                       <img
                         src="/assets/customer/employee/uploadIcon.svg"
                         alt="uploadIcon"
                         className="absolute inset-0 m-auto"
+                        onClick={(e) => e.stopPropagation()}
+
                       />
                     )}
                     <input
@@ -700,12 +768,13 @@ const CustomerRegStepFirst = () => {
 
                   {formData.drivingBack ? (
                     <button className="absolute top-1 z-[999] right-[10px]"
-                      onClick={() => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          drivingBack: null,
-                        }));
-                      }}
+                      // onClick={() => {
+                      //   setFormData((prevData) => ({
+                      //     ...prevData,
+                      //     drivingBack: null,
+                      //   }));
+                      // }}
+                      onClick={() => handleDelete('drivingBack', drivingBackRef)}
 
                     > <FaTrashAlt style={{ color: 'red' }} /></button>
                   ) : ("")}
@@ -723,12 +792,16 @@ const CustomerRegStepFirst = () => {
                         src={URL.createObjectURL(formData.drivingBack)}
                         alt="Civil Code"
                         className=" object-cover  w-[200px] h-[100px]  "
+                         onClick={(e) => e.stopPropagation()}
+
                       />
                     ) : (
                       <img
-                        src="/assets/customer/employee/uploadIcon.svg"
+                        src="/assets/customer/employee/uploadIcon.svg"  
                         alt="uploadIcon"
                         className="absolute inset-0 m-auto"
+                        onClick={(e) => e.stopPropagation()}
+
                       />
                     )}
                     <input
@@ -741,7 +814,7 @@ const CustomerRegStepFirst = () => {
                   </label>
                   {formData.drivingBack ? ("") : (
                     <span className="text-xs text-[#005F7E] absolute bottom-4">
-                      Хуулах
+                      Хуулах1
                     </span>)}
                 </div>
               </div>
@@ -759,13 +832,18 @@ const CustomerRegStepFirst = () => {
             <Button
               type="submit"
               className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
-              onClick={handleCreateCustomer}
+              // onClick={handleCreateCustomer}
             >
 
               Нэмэх
             </Button>
           </div>
+
+
         </div>
+
+        </form>
+        </Form>
 
         <ToastContainer
           position="top-right" // Position in the top-right corner

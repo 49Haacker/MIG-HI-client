@@ -1,5 +1,7 @@
   import { Button } from "@/components/ui/button";
   import { Input } from "@/components/ui/input";
+  import { useUserContext } from '@/admin/Context/UserData';
+
 
   import axios  from "@/axios";
   import { AxiosResponse }   from "axios";
@@ -32,9 +34,23 @@
     RegisterNumber?: string;
     PhoneNo?: string;
   }
+  interface UserDetails {
+    LastName: string;
+    Name: string;
+    RegisterNumber: string;
+    PhoneNo: string;
+    VehicleCertificate?: string;
+    IdentitybackCertificate?: string;
+    SteeringWheelCertificate?: string;
+    DrivingLinceseback?: string;
+    CivilWarCertificate?: string;
+  }
+  
 
 
   const List = () => {
+    
+    const  { updateData} = useUserContext();
     const [listData, setListData] = React.useState<ListData[]>([]);
     const [selectedType, setSelectedType] = React.useState<string | null>(null);
     const navigate = useNavigate();
@@ -46,10 +62,6 @@
     });
   
 
-    // if api come then in useEffect make a function and call that api and out of function call that function
-    React.useEffect(() => {
-    
-    }, []);
 
 
 
@@ -68,6 +80,8 @@
         
         // Assuming response contains a `data` field with a `data` array inside it
         setListData(response.data.data);
+        
+
       } catch (error) {
         setListData([]);
         // Log the error with type safety
@@ -90,9 +104,6 @@
      
     };
 
-
-
-
     const handleTypeChange = (value: string) => {
       setSelectedType(value);
       // console.log("value = ", value);
@@ -102,9 +113,11 @@
       ? listData.filter((insurance) => insurance.UserTypeText === selectedType)
       : listData;
 
-    // const handleNavigate =()=>{
-    //   if(listData)
-    // }
+      const moreData = (list: UserDetails) => {
+        updateData([list]);
+        navigate("/admin/registration/admin-customer-details");
+      };
+      
 
     return (
       <>
@@ -182,7 +195,7 @@
                   Хэрэглэгчийн төрөл
                 </label>
                 <Select onValueChange={handleTypeChange}>
-                  <SelectTrigger>
+                  <SelectTrigger className="flex items-center justify-between ">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -194,10 +207,10 @@
                         Manager
                       </SelectItem>
                       <SelectItem
-                        value="Admin"
+                        value="User"
                         className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
                       >
-                        Admin
+                        User
                       </SelectItem>
                     </SelectGroup>
                   </SelectContent>
@@ -244,11 +257,7 @@
                   {/* More */}
                   <span
                     className="text-[#005F7E] underline underline-offset-4 text-[14px] leading-[14px] font-medium cursor-pointer"
-                    onClick={() => {
-                      list.UserTypeText === "Менежер"
-                        ? navigate("/admin/registration/manager-details")
-                        : navigate("/admin/registration/admin-customer-details");
-                    }}
+                    onClick={() => moreData(list)}
                   >
                     Дэлгэрэнгүй
                   </span>

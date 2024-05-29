@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import compensationListDataJson from "../../../../json/adminCompensationList.json";
+// import compensationListDataJson from "../../../../json/adminCompensationList.json";
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const CompensationList = () => {
 
   // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
-    setCompensationListData(compensationListDataJson);
+    setCompensationListData([]);
   }, []);
 
   const handleTypeChange = (value: string) => {
@@ -50,7 +50,7 @@ const CompensationList = () => {
     <>
       {/* pending this table only  */}
       {compensationListData.length === 0 ? (
-        <div className="flex flex-col justify-center items-center w-full">
+        <div className="flex flex-col justify-center items-center w-full h-[60vh]  " >
           <img
             src="/assets/customer/employee/emptyClaimHistory.svg"
             alt="emptyClaimHistory"

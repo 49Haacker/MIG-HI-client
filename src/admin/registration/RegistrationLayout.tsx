@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { UserProvider } from '@/admin/Context/UserData'; 
+ 
+
 import "@/shared-css/CustomScroller.css";
 
 const RegistrationLayout = () => {
@@ -87,8 +90,10 @@ const RegistrationLayout = () => {
         </div>
 
         {/* body div */}
-        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[100%] overflow-y-scroll custom-scroller-design">
+        <div className="flex bg-[#FFFFFF]  px-6 py-9 w-full lg:h-[77vh] overflow-y-scroll custom-scroller-design">
+          <UserProvider>
           <Outlet />
+          </UserProvider>
         </div>
       </div>
     </>
