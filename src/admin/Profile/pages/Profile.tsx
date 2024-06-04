@@ -150,7 +150,7 @@ const Profile = () => {
               <button
                 className="leading-[14px] flex justify-center items-center bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] py-2 px-4 rounded"
               >
-                {regNumber.firstTwoDigits}
+                {regNumber.middle}
               </button>
             )}
             <Button
