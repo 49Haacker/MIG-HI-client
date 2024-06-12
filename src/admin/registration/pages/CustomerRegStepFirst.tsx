@@ -96,9 +96,6 @@ const CustomerRegStepFirst = () => {
   ];
 
 
-
-
-
   const handleDelete = (fieldName: string, inputRef: React.RefObject<HTMLInputElement>) => {
     setFormData(prevData => ({
       ...prevData,
@@ -109,9 +106,6 @@ const CustomerRegStepFirst = () => {
     }
   };
   
-
-
-
   const [selectedLater1, setSelectedLater1] = useState<string>("P");
   const [selectedLater2, setSelectedLater2] = useState<string>("Д");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
@@ -814,7 +808,7 @@ const CustomerRegStepFirst = () => {
                   </label>
                   {formData.drivingBack ? ("") : (
                     <span className="text-xs text-[#005F7E] absolute bottom-4">
-                      Хуулах1
+                      Хуулах
                     </span>)}
                 </div>
               </div>

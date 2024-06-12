@@ -25,7 +25,7 @@ const ProfileLayout = () => {
 
   return (
     <>
-      <div className="my-3 mx-6">
+      <div className="my-3 mx-6 relative">
         {/* tab on top */}
         <div className="w-full flex items-center gap-2">
           {/* Profile */}

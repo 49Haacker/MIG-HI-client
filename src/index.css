@@ -70,6 +70,47 @@ input[type="text"],
 textarea {
   text-transform: uppercase;
 }
+@keyframes slideInLeft {
+  from {
+    /* transform: translateY(0%); */
+    opacity: 0;
+  }
+  to {
+    /* transform: translateY(100%); */
+    opacity: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .mobile-view-hemburger {
+    position: absolute;
+    top: -10px;  
+    right: 0px;
+    z-index: 38;
+    display: flex;
+    flex-direction: column;
+    /* backdrop-filter: blur(5.5px); */
+    background: rgb(255, 255, 255);
+    height: calc(319px);
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    gap: 49px;
+    box-shadow: rgba(0, 0, 1, 0.31) -0px 0px 0px 1px;
+    border-radius: 14px 14px 14px 14px;
+    padding: 24px 17px;
+    transition: all 0.5s ease 0s;
+    animation: slideInLeft 0.5s ease-out;
+    display: flex;
+    align-items: flex-end;
+}
+  
+}
+
+
+
+
+
 
 @layer base {
   * {

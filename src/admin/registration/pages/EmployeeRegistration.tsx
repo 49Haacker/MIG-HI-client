@@ -99,6 +99,7 @@ const EmployeeRegistration = () => {
       toast.success("Manager register successfully");
       setSelectedLater1("");
       setSelectedLater2("");
+      form.reset();
     } catch (error) {
       // if (error.response && error.response.errors && error.response.errors.length > 0) {
         // toast.error(error.response.data.errors[0].msg);
@@ -112,7 +113,7 @@ const EmployeeRegistration = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 items-start justify-between w-full">
+      <div className="flex flex-col gap-4 items-start justify-between w-full relative">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -126,21 +127,21 @@ const EmployeeRegistration = () => {
                     control={form.control}
                     name="lastName"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                          Овог
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                          type="text"
+                        <FormItem>
+                          <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
+                            Овог <span className=" ml-1 text-[red]">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                            type="text"
 
-                            placeholder="Овог оруулах..."
-                            {...field}
-                            className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                              placeholder="Овог оруулах..."
+                              {...field}
+                              className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                     )}
                   />
                 </div>
@@ -153,7 +154,7 @@ const EmployeeRegistration = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                          Нэр
+                          Нэр <span className=" ml-1 text-[red]">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -175,7 +176,7 @@ const EmployeeRegistration = () => {
                     htmlFor=""
                     className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]"
                   >
-                    Регистрийн дугаар
+                    Регистрийн дугаар <span className=" ml-1 text-[red]">*</span>
                   </Label>
 
                   <div className="flex gap-2">
@@ -277,7 +278,7 @@ const EmployeeRegistration = () => {
                                 placeholder="Дугаар"
                                 {...field}
                                 maxLength={8}
-                                pattern="[0-9]*"
+                               
                               
                                 className="text-[#424B5A] uppercase	  placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
                               />
@@ -299,7 +300,7 @@ const EmployeeRegistration = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                        Утасны дугаар
+                        Утасны дугаар <span className=" ml-1 text-[red]">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -322,10 +323,10 @@ const EmployeeRegistration = () => {
               <div className="w-full flex justify-end">
                 <Button
                   type="submit"
-                  className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
+                  className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] my-[50px]"
                   // onClick={form.handleRegisterManager(onclick)}
                 >
-                  Нэмэх sass
+                  Нэмэх
                 </Button>
               </div>
             </div>

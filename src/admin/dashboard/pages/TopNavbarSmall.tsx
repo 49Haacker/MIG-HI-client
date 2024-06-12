@@ -23,7 +23,7 @@ const TopNavbarSmall = () => {
     // Insurance contract
     {
       path: "/admin/insurance-contract/list-contracts",
-      text: "Даатгалын гэрээ",
+      text: "Даатгалын<br>гэрээ",
       image: "/assets/customer/sidenavbar/sideInsuContract.svg",
       focusImage: "/assets/customer/sidenavbar/sideInsuContractLight.svg",
     },
@@ -31,7 +31,7 @@ const TopNavbarSmall = () => {
     // Compensation
     {
       path: "/admin/compensation/compensation-list",
-      text: "Нөхөн төлбөр",
+      text: "Нөхөн<br>төлбөр",
       image: "/assets/customer/sidenavbar/sideCompensation.svg",
       focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",
     },
@@ -121,10 +121,12 @@ const TopNavbarSmall = () => {
               key={index}
               to={link.path}
               onClick={link.text === "Exit" ? handleLogout : undefined}
-              className={`flex flex-col items-center gap-2 w-full ${
+              className={`flex flex-col items-center gap-2 justify-center  ${
                 activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
-              }`}
-              style={{ height: "calc(100% - 0px)", width: "calc(100% - 0px)" }}
+              }
+              ${link.text == 'Exit' ? " w-[50px]" : "w-[70px] hover:w-[120px] hover:text-center" }
+              `}
+              style={{ height: "calc(100% - 0px)" , flexGrow:'1', overflow:'hidden' }}
             >
               <img
                 src={activeLink === index ? link.focusImage : link.image}
@@ -132,9 +134,8 @@ const TopNavbarSmall = () => {
                 className="w-[32px] h-[32px]"
               />
 
-              <p className="text-[16px] leading-[16px] text-[#FFFFFF] font-normal">
-                {link.text}
-              </p>
+              {/* <p className="text-[16px] w-[100%] leading-[16px] text-[#FFFFFF] font-normal truncate hover:whitespace-nowrap relative" style={{textOverflow:'ellipsis' , overflow:'hidden'}}dangerouslySetInnerHTML={{ __html: link.text }}
+              /> */}
             </Link>
           ))}
         </div>

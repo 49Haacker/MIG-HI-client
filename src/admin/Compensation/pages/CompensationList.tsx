@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import FullPageLoader from './../../../components/ui/FullPageLoader';
+
 
 import {
   Select,
@@ -14,19 +16,22 @@ import {
 // import compensationListDataJson from "../../../../json/adminCompensationList.json";
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
+import axios from "@/axios";
+
 
 interface compensationListData {
-  this_one: string;
-  name: string;
-  register_number: string;
-  phone_number: string;
-  status: string;
+  lastName: string;
+  firstName: string;
+  registerNo: string;
+  contractNo: string;
+  statusName: string;
 }
 
 const CompensationList = () => {
   const [compensationListData, setCompensationListData] = React.useState<
     compensationListData[]
   >([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -42,12 +47,33 @@ const CompensationList = () => {
 
   const filteredData = selectedType
     ? compensationListData.filter(
-        (compensationList) => compensationList.status === selectedType
+        (compensationList) => compensationList.statusName === selectedType
       )
     : compensationListData;
 
+
+
+  React.  useEffect( ()=>{
+    setIsLoading(true);
+    axios.get('Quits/List?SearchTypeId=3&SearchValue=all').then((res) =>{
+
+      setCompensationListData(res.data.quitsLists);
+
+    }).catch().then(()=>{
+
+        setIsLoading(false);
+
+    });
+
+  }, []);
+  
+
+
+
+
   return (
     <>
+    <FullPageLoader isLoading={isLoading} />
       {/* pending this table only  */}
       {compensationListData.length === 0 ? (
         <div className="flex flex-col justify-center items-center w-full h-[60vh]  " >
@@ -117,7 +143,7 @@ const CompensationList = () => {
                   Төрөл
                 </label>
                 <Select onValueChange={handleTypeChange}>
-                  <SelectTrigger>
+                  <SelectTrigger className="flex items-center justify-between " style={{  inlineSize: 'max-content'}}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -164,39 +190,39 @@ const CompensationList = () => {
                 <div
                   key={index}
                   className={`grid grid-cols-7 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer whitespace-nowrap ${
-                    (items.status === "Хянаж байгаа" ||
-                      items.status === "Төлөгдсөн") &&
+                    (items.statusName === "Хянаж байгаа" ||
+                      items.statusName === "Төлөгдсөн") &&
                     "bg-[#F3F7F9]"
                   }`}
                 >
-                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {items.this_one}
+                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] truncate" >
+                    {items.lastName}
                   </span>
-                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {items.name}
+                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] truncate" >
+                    {items.firstName}
                   </span>
-                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {items.register_number}
+                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] truncate" >
+                    {items.registerNo}
                   </span>
-                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {items.phone_number}
+                  <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] truncate" >
+                    {items.contractNo}
                   </span>
 
                   <div className=" w-full col-span-2">
                     <Button
                       className={`rounded-full h-[24px] ${
-                        items.status === "Хүлээн авсан"
+                        items.statusName === "Хүлээн авсан"
                           ? "bg-[#E6EFF2] hover:bg-[#E6EFF3] text-[#005F7E]"
-                          : items.status === "Хянаж байгаа"
+                          : items.statusName === "Хянаж байгаа"
                           ? "bg-[#F4926829] hover:bg-[#F4926829] text-[#F49268]"
-                          : items.status === "Төлбөр хийгдэж байгаа"
+                          : items.statusName === "Төлбөр хийгдэж байгаа"
                           ? "bg-[#AED03829] hover:bg-[#AED03829] text-[#AED038]"
-                          : items.status === "Төлөгдсөн"
+                          : items.statusName === "Төлөгдсөн"
                           ? "bg-[#00A27B29] hover:bg-[#00A27B29] text-[#00A27B]"
                           : ""
                       }`}
                     >
-                      {items.status}
+                      {items.statusName}
                     </Button>
                   </div>
 

@@ -25,7 +25,7 @@ const ProfileLayout = () => {
 
   return (
     <>
-      <div className="my-3 mx-6">
+      <div className="my-3 mx-6 relative">
         {/* tab on top */}
         <div className="flex items-center gap-2 overflow-x-scroll lg:overflow-hidden w-[16.5em] sm:w-[29.5em] lg:w-full">
           {/* Profile */}

@@ -96,24 +96,26 @@ const TopNavbarSmall = () => {
 
         <div className="w-full flex gap-1 items-center mb-8 bg-white overflow-x-scroll whitespace-nowrap">
           {links.map((link, index) => (
-            <Link
-              key={index}
-              to={link.path}
-              onClick={link.path === "Exit" ? handleLogout : undefined}
-              className={`flex flex-col items-center gap-2  ${
-                activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
-              }`}
-              style={{ height: "calc(100% - 0px)", width: "calc(100% - 0px)" }}
-            >
-              <img
-                src={activeLink === index ? link.focusImage : link.image}
-                alt={link.text}
-                className="w-[32px] h-[32px]"
-              />
+             <Link
+             key={index}
+             to={link.path}
+             onClick={link.text === "Exit" ? handleLogout : undefined}
+             className={`flex flex-col items-center gap-2 justify-center  ${
+               activeLink === index ? "bg-[#1A6F8B] p-4" : "bg-[#669FB2] p-4"
+             }
+             ${link.text == 'Exit' ? " w-[50px]" : "w-[70px] hover:w-[120px] hover:text-center" }
+             `}
+             style={{ height: "calc(100% - 0px)" , flexGrow:'1', overflow:'hidden' }}
+           >
+             <img
+               src={activeLink === index ? link.focusImage : link.image}
+               alt={link.text}
+               className="w-[32px] h-[32px]"
+             />
 
-              <p className="text-[16px] leading-[16px] text-[#FFFFFF] font-normal text-center">
+              {/* <p className="text-[16px] leading-[16px] text-[#FFFFFF] font-normal text-center">
                 {link.text}
-              </p>
+              </p> */}
             </Link>
           ))}
         </div>
