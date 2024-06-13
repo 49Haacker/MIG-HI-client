@@ -1,7 +1,10 @@
-import { ChangeEvent, useRef } from "react";
-import axios from "@/axios"
+import { ChangeEvent, useRef, useState } from "react";
+import { RiDeleteBinLine } from "react-icons/ri";
+
+import axios from "@/axios";
 const StepThird = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const handleImageClick = () => {
     if (inputRef.current) {
@@ -9,46 +12,56 @@ const StepThird = () => {
     }
   };
 
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const selectedFile = e.target.files?.[0];
+  //   if (selectedFile) {
+  //     console.log("Selected file:", selectedFile);
+  //   }
+  // };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      console.log("Selected file:", selectedFile);
-    }
+    const files = Array.from(e.target.files || []);
+    const newImages = files.map((file) => URL.createObjectURL(file));
+    setSelectedImages((prevImages) => [...prevImages, ...newImages]);
   };
 
-  const SendClaim = async () =>{
+  const removeImage = (index: number) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const SendClaim = async () => {
     try {
-        // Your JSON data
-        const data = {
-            "f1": "",  // Reimbursement number
-            f2: 3,   // Contract Type Number
-            f3: 1858548,  // ContractID
-            f4: 0,   // ContractDetailId
-            f5: "1104290003",  // ProductID
-            f6: "2024-03-23",  // current date
-            f7: "2024-03-30",  // date of claim
-            f8: "2024-03-30",  // date of Case date
-            f9: "1",  // case number
-            f10: "",  // Plate number
-            f11: "99010990",  // Phone number
-            f12: "test",  // Additional information
-            f13: 100000,  // Claimed amount
-            QUITSIMAGES: [
-                {"F1": "1", "F2": "TEST", "F3": "IMAGE.PNG"},
-                {"F1": "2", "F2": "TEST 1", "F3": "IMAGE1.PNG"}
-            ]
-        };
+      // Your JSON data
+      const data = {
+        f1: "", // Reimbursement number
+        f2: 3, // Contract Type Number
+        f3: 1858548, // ContractID
+        f4: 0, // ContractDetailId
+        f5: "1104290003", // ProductID
+        f6: "2024-03-23", // current date
+        f7: "2024-03-30", // date of claim
+        f8: "2024-03-30", // date of Case date
+        f9: "1", // case number
+        f10: "", // Plate number
+        f11: "99010990", // Phone number
+        f12: "test", // Additional information
+        f13: 100000, // Claimed amount
+        QUITSIMAGES: [
+          { F1: "1", F2: "TEST", F3: "IMAGE.PNG" },
+          { F1: "2", F2: "TEST 1", F3: "IMAGE1.PNG" },
+        ],
+      };
 
-        // Send POST request to the API
-        const response = await axios.post('Quits/Insert', data);
+      // Send POST request to the API
+      const response = await axios.post("Quits/Insert", data);
 
-        // Handle response
-        console.log(response.data);
+      // Handle response
+      console.log(response.data);
     } catch (error) {
-        // Handle error
-        console.error('Error fetching data:', error);
-    }};
-
+      // Handle error
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <>
@@ -67,8 +80,136 @@ const StepThird = () => {
 
           <div className="flex flex-col w-full">
             {/* 1. Reimbursement form,  */}
-            <div className="flex flex-col sm:grid grid-cols-3 gap-2 my-3">
-              {/*1. Reimbursement form*/}
+            <div
+              className={` ${
+                selectedImages.length > 0
+                  ? "flex w-full flex-wrap"
+                  : "grid grid-cols-3"
+              } gap-2 my-3`}
+            >
+              {/* Image preview section */}
+              {selectedImages.length > 0 ? (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[#424B5A] text-md font-normal leading-4">
+                      1. Нөхөн төлбөрийн маягт
+                    </span>
+
+                    <div className={`flex flex-wrap gap-2 mt-2 w-full`}>
+                      {selectedImages.map((image, index) => (
+                        <div
+                          key={index}
+                          className=""
+                          // style={{ minWidth: "18rem" }}
+                        >
+                          <span className="flex justify-between">
+                            <span>{`preview-${index}`}</span>
+                            <button
+                              className="p-1"
+                              onClick={() => removeImage(index)}
+                            >
+                              <RiDeleteBinLine className="text-red-600 text-3xl" />
+                            </button>
+                          </span>
+
+                          <div className="bg-[#E6EFF2] h-[12rem] max-w-[15rem] rounded-lg p-2 cursor-pointer">
+                            <img
+                              src={image}
+                              alt={`preview-${index}`}
+                              className="h-full w-full object-cover rounded-lg"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Form sections */}
+                  <div className="flex flex-col gap-2 sm:whitespace-nowrap">
+                    <span className="text-[#424B5A] text-md font-normal leading-4">
+                      1. Нөхөн төлбөрийн маягт
+                    </span>
+
+                    <div
+                      className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                      onClick={handleImageClick}
+                      style={{ position: "relative" }}
+                    >
+                      <label htmlFor="photoId" className="cursor-pointer">
+                        <img
+                          src="/assets/customer/employee/uploadIcon.svg"
+                          alt="uploadIcon"
+                          className="absolute inset-0 m-auto"
+                        />
+                        <input
+                          id="photoId"
+                          type="file"
+                          ref={inputRef}
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                      <span className="text-xs text-[#005F7E] absolute bottom-4">
+                        Хуулах
+                        {/* copy */}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* <div className="flex flex-col gap-2"> */}
+              <div
+                className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                onClick={handleImageClick}
+                style={{ position: "relative" }}
+              >
+                <label htmlFor="drivingLicense" className="cursor-pointer">
+                  <img
+                    src="/assets/customer/employee/add.svg"
+                    alt="uploadIcon"
+                    className="absolute inset-0 m-auto"
+                  />
+                  <input
+                    id="drivingLicense"
+                    type="file"
+                    ref={inputRef}
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                </label>
+                <span className="text-xs text-[#005F7E] absolute bottom-4">
+                  Нэмэх
+                  {/* add */}
+                </span>
+              </div>
+              {/* </div> */}
+            </div>
+
+            {/*1. Reimbursement form*/}
+            {/* <div className="flex flex-col sm:grid grid-cols-3 gap-2 my-3">
+              {selectedImages.length > 0 && (
+                <div className="flex gap-2 flex-wrap mt-2">
+                  {selectedImages.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={image}
+                        alt={`preview-${index}`}
+                        className="h-24 w-24 object-cover rounded-lg"
+                      />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => removeImage(index)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex flex-col gap-2 sm:whitespace-nowrap">
                 <span className="text-[#424B5A] text-md font-normal leading-4">
                   1. Нөхөн төлбөрийн маягт
@@ -92,9 +233,9 @@ const StepThird = () => {
                       onChange={handleFileChange}
                     />
                   </label>
+
                   <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Хуулах
-                    {/* copy */}
+                    Хуулах copy
                   </span>
                 </div>
               </div>
@@ -120,12 +261,11 @@ const StepThird = () => {
                     />
                   </label>
                   <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Нэмэх
-                    {/* add */}
+                    Нэмэх add
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* 2. Refund request page */}
             <div className="flex flex-col sm:grid grid-cols-3 gap-2 my-3">
@@ -404,7 +544,10 @@ const StepThird = () => {
         </div>
 
         <div className="flex justify-end w-full my-8">
-          <button onClick={() => SendClaim()} className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#004F6F] p-2 rounded-md w-full sm:w-1/6">
+          <button
+            onClick={() => SendClaim()}
+            className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#004F6F] p-2 rounded-md w-full sm:w-1/6"
+          >
             Илгээх
           </button>
         </div>
