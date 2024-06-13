@@ -108,61 +108,22 @@ const StepThird = () => {
                               className="p-1"
                               onClick={() => removeImage(index)}
                             >
-                              <RiDeleteBinLine className="text-red-600 text-3xl" />
+                              <RiDeleteBinLine className="text-red-600 text-1xl" />
                             </button>
                           </span>
 
-                          <div className="bg-[#E6EFF2] h-[12rem] max-w-[15rem] rounded-lg p-2 cursor-pointer">
+                          <div className="bg-[#E6EFF2] h-[120px] px-[90px] rounded-lg p-2 cursor-pointer">
                             <img
                               src={image}
                               alt={`preview-${index}`}
-                              className="h-full w-full object-cover rounded-lg"
+                              className=" object-cover rounded-lg h-[110px]"
                             />
                           </div>
+                          
                         </div>
                       ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Form sections */}
-                  <div className="flex flex-col gap-2 sm:whitespace-nowrap">
-                    <span className="text-[#424B5A] text-md font-normal leading-4">
-                      1. Нөхөн төлбөрийн маягт
-                    </span>
-
-                    <div
-                      className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
-                      onClick={handleImageClick}
-                      style={{ position: "relative" }}
-                    >
-                      <label htmlFor="photoId" className="cursor-pointer">
-                        <img
-                          src="/assets/customer/employee/uploadIcon.svg"
-                          alt="uploadIcon"
-                          className="absolute inset-0 m-auto"
-                        />
-                        <input
-                          id="photoId"
-                          type="file"
-                          ref={inputRef}
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                      </label>
-                      <span className="text-xs text-[#005F7E] absolute bottom-4">
-                        Хуулах
-                        {/* copy */}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* <div className="flex flex-col gap-2"> */}
-              <div
-                className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                      <div
+                className="h-[120px] px-[187px] max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
                 onClick={handleImageClick}
                 style={{ position: "relative" }}
               >
@@ -185,88 +146,73 @@ const StepThird = () => {
                   {/* add */}
                 </span>
               </div>
-              {/* </div> */}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Form sections */}
+                  <div className="flex flex-col gap-2 sm:whitespace-nowrap">
+                    <span className="text-[#424B5A] text-md font-normal leading-4">
+                      1. Нөхөн төлбөрийн маягт
+                    </span>
+
+                    <div
+                      className="bg-[#E6EFF2] h-[120px] px-[px-[187px] max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                      onClick={handleImageClick}
+                      style={{ position: "relative" }}
+                    >
+                      <label htmlFor="photoId" className="cursor-pointer">
+                        <img
+                          src="/assets/customer/employee/uploadIcon.svg"
+                          alt="uploadIcon"
+                          className="absolute inset-0 m-auto"
+                        />
+                        <input
+                          id="photoId"
+                          type="file"
+                          ref={inputRef}
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                      <span className="text-xs text-[#005F7E] absolute bottom-4">
+                        Хуулах
+                        {/* copy */}
+                      </span>
+                    </div>
+                    
+                  </div>
+
+                  <div
+                className="h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                onClick={handleImageClick}
+                style={{ position: "relative" }}
+              >
+                <label htmlFor="drivingLicense" className="cursor-pointer">
+                  <img
+                    src="/assets/customer/employee/add.svg"
+                    alt="uploadIcon"
+                    className="absolute inset-0 m-auto"
+                  />
+                  <input
+                    id="drivingLicense"
+                    type="file"
+                    ref={inputRef}
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                </label>
+                <span className="text-xs text-[#005F7E] absolute bottom-4">
+                  Нэмэх
+                  {/* add */}
+                </span>
+              </div>
+                </>
+              )}
             </div>
 
-            {/*1. Reimbursement form*/}
-            {/* <div className="flex flex-col sm:grid grid-cols-3 gap-2 my-3">
-              {selectedImages.length > 0 && (
-                <div className="flex gap-2 flex-wrap mt-2">
-                  {selectedImages.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={image}
-                        alt={`preview-${index}`}
-                        className="h-24 w-24 object-cover rounded-lg"
-                      />
-                      <button
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                        onClick={() => removeImage(index)}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex flex-col gap-2 sm:whitespace-nowrap">
-                <span className="text-[#424B5A] text-md font-normal leading-4">
-                  1. Нөхөн төлбөрийн маягт
-                </span>
-                <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
-                  onClick={handleImageClick}
-                  style={{ position: "relative" }}
-                >
-                  <label htmlFor="photoId" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/uploadIcon.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
-                    <input
-                      id="photoId"
-                      type="file"
-                      ref={inputRef}
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                    />
-                  </label>
-
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Хуулах copy
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div
-                  className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
-                  onClick={handleImageClick}
-                  style={{ position: "relative" }}
-                >
-                  <label htmlFor="drivingLicense" className="cursor-pointer">
-                    <img
-                      src="/assets/customer/employee/add.svg"
-                      alt="uploadIcon"
-                      className="absolute inset-0 m-auto"
-                    />
-                    <input
-                      id="drivingLicense"
-                      type="file"
-                      ref={inputRef}
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                  <span className="text-xs text-[#005F7E] absolute bottom-4">
-                    Нэмэх add
-                  </span>
-                </div>
-              </div>
-            </div> */}
-
+            
             {/* 2. Refund request page */}
             <div className="flex flex-col sm:grid grid-cols-3 gap-2 my-3">
               <div className="flex flex-col gap-2 sm:whitespace-nowrap">
@@ -276,7 +222,7 @@ const StepThird = () => {
                 </span>
 
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -303,7 +249,7 @@ const StepThird = () => {
 
               <div className="flex flex-col gap-2">
                 <div
-                  className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                  className="h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -338,7 +284,7 @@ const StepThird = () => {
                 </span>
 
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -365,7 +311,7 @@ const StepThird = () => {
 
               <div className="flex flex-col gap-2">
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer mt-auto"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer mt-auto"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -392,7 +338,7 @@ const StepThird = () => {
 
               <div className="flex flex-col gap-2">
                 <div
-                  className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                  className="h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -427,7 +373,7 @@ const StepThird = () => {
                 </span>
 
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -454,7 +400,7 @@ const StepThird = () => {
 
               <div className="flex flex-col gap-2">
                 <div
-                  className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                  className="h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -488,7 +434,7 @@ const StepThird = () => {
                   <span className="text-red-500">*</span>
                 </span>
                 <div
-                  className="bg-[#E6EFF2] h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
+                  className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
@@ -515,7 +461,7 @@ const StepThird = () => {
 
               <div className="flex flex-col gap-2">
                 <div
-                  className="h-[96px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
+                  className="h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg border-[2px] border-dashed border-[#1A6F8B] p-2 relative cursor-pointer mt-auto"
                   onClick={handleImageClick}
                   style={{ position: "relative" }}
                 >
