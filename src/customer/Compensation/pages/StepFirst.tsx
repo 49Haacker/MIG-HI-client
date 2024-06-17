@@ -87,7 +87,7 @@ const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
           <Label className="text-[#424B5A]">Идэвхитэй гэрээнээс сонгох</Label>
           <Select>
             <SelectTrigger className="focus:ring-1 flex items-center justify-between focus:ring-[#B3CFD8] focus:ring-offset-[#B3CFD8]">
-              <SelectValue placeholder="Select insurance" />
+              <SelectValue placeholder="Даатгал сонгох" />
             </SelectTrigger>
             <SelectContent>
               {insuranceData.map((option,index) => (
@@ -105,7 +105,7 @@ const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
             Нөхөн төлбөрийн тохиолдлын товч агуулга
           </Label>
           <Textarea
-            placeholder="Type your message here."
+            placeholder="мессежээ энд бичнэ үү"
             className="focus:ring-1 focus:ring-[#B3CFD8] focus:ring-offset-[#B3CFD8]"
           />
         </div>

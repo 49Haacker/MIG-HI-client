@@ -6,12 +6,15 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
+import { ToastContainer, toast } from 'react-toastify';
 import Box from '@mui/material/Box';
+import axios from '@/axios'
 
 import {
   verifyOtp,
   VerifyOtpResponse,
 } from "@/redux/features/otpVerify/otpVerifySlice";
+// import { any, number } from "zod";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
@@ -83,6 +86,26 @@ const VerifyOtp = () => {
     }
   };
 
+
+  
+  const redeemCode = async (phoneNumber:any) =>{
+    setLoading(true);
+      axios.post('customer-login', {
+        phoneNo:phoneNumber
+      }).then((res)=>{
+
+        if(res){
+          toast.success("Otp Sent Successfully !");
+        }
+
+      }).catch(()=>{
+          toast.error("Please Try Again !!");
+      }).then(()=>{
+        setLoading(false);
+      });
+
+  }
+
   return (
     <div className="flex items-center justify-center h-full w-full">
       <div className="bg-[#FFFFFF] rounded-2xl p-4 w-3/4 lg:w-1/2">
@@ -114,7 +137,7 @@ const VerifyOtp = () => {
 
         {/* Redeem the code */}
         <div className="w-full text-right">
-          <span className="text-[#005F7E] font-normal underline underline-offset-2 text-[12px] leading-[14.88px]">
+          <span className="text-[#005F7E] font-normal underline underline-offset-2 text-[12px] leading-[14.88px]" onClick={()=>redeemCode(phoneNumber)}>
             Код дахин авах
           </span>
         </div>
@@ -136,6 +159,17 @@ const VerifyOtp = () => {
           </Button>
         </div>
       </div>
+      <ToastContainer
+        position="top-right" // Position in the top-right corner
+        autoClose={3000} // Auto-close after 3 seconds
+        hideProgressBar={false} // Show the progress bar
+        newestOnTop={true} // Show new notifications on top
+        closeOnClick // Close on click
+        rtl={false} // Right-to-left or left-to-right
+        pauseOnFocusLoss // Pause when the window loses focus
+        draggable // Allow the toast to be dragged
+        pauseOnHover // Pause when hovering over the toast
+        />
     </div>
   );
 };

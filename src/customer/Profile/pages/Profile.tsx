@@ -239,7 +239,7 @@ const Profile = () => {
                     <input
                       id="civilCertificateFrontInput"
                       type="file"
-                      accept="image/*"
+                      accept="*"
                       style={{ display: "none" }}
                       onChange={(e) =>
                         handleImageChange(

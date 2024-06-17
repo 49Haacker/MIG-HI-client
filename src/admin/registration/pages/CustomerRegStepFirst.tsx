@@ -11,6 +11,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import FullPageLoader from './../../../components/ui/FullPageLoader';
+
+import pdfIcon from "../../../assets/eclaim/pdf.png";
+import wordIcon from "../../../assets/eclaim/word.png";
 // import React from "react";
 
 //valdiation 
@@ -42,6 +45,13 @@ const formSchema = z.object({
   }),
 });
 
+interface FormData {
+  civilCode: string | null;
+  identityCard: string | null;
+  vehicleCertificate: string | null;
+  drivingFront: string | null;
+  drivingBack: string | null;
+}
 const CustomerRegStepFirst = () => {
 
 
@@ -65,28 +75,14 @@ const CustomerRegStepFirst = () => {
   const [error] = useState<string>("");
 
 
-  let [formData, setFormData] = useState<{
-    civilCode: File | null;
-    identityCard: File | null;
-    vehicleCertificate: File | null;
-    drivingFront: File | null;
-    drivingBack: File | null;
-  }>({
-    civilCode: null,
-    identityCard: null,
-    vehicleCertificate: null,
-    drivingFront: null,
-    drivingBack: null,
+  let [formData, setFormData] = useState<FormData>({
+    civilCode: '',
+    identityCard: '',
+    vehicleCertificate: '',
+    drivingFront: '',
+    drivingBack: '',
   });
 
-  
-
-  // const [ setInputValues] = useState({
-  //   lastName: "",
-  //   firstName: "",
-  //   phoneNumber: "",
-  //   RegisterNo: "",
-  // });
 
   const alphabet = [
   
@@ -137,6 +133,22 @@ const CustomerRegStepFirst = () => {
     if (inputRef.current) {
       inputRef.current.click();
     }
+  };
+
+  const getPreviewImg = (file: File | null) => {
+    if (file) {
+      const fileType = file.type;
+      if (fileType.startsWith("image/")) {
+        return URL.createObjectURL(file);
+      } else if (fileType === "application/pdf") {
+        return pdfIcon; // Use your PDF icon path
+      } else if (fileType === "application/msword" || fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        return wordIcon; // Use your Word icon path
+      }else{
+        return null;
+      }
+    }
+    return null;
   };
 
   const toggleCheckbox = () => {
@@ -523,9 +535,10 @@ const CustomerRegStepFirst = () => {
                     {formData.civilCode ? (
                       <>
                         <img
-                          src={URL.createObjectURL(formData.civilCode)}
+                          // src={URL.createObjectURL(formData.civilCode)}
+                          src={getPreviewImg(formData.civilCode)}
                           alt="Civil Code"
-                          className=" object-cover   w-[200px] h-[100px]  "
+                          className="object-contain  w-[200px] h-[100px]  "
                           onClick={(e) => e.stopPropagation()}
 
                         />
@@ -548,7 +561,7 @@ const CustomerRegStepFirst = () => {
                     )}
                     <input
                       id="civilCode"
-                      type="file"
+                      type="file"   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                       ref={civilCodeRef}
                       style={{ display: "none" }}
                       onChange={(e) => handleFileChange(e, "civilCode")}
@@ -588,13 +601,14 @@ const CustomerRegStepFirst = () => {
                   onClick={() => handleImageClick(identityCardRef)}
                   style={{ position: "relative" }}
                 >
-                  <label htmlFor="civilCode" className="cursor-pointer">
+                  <label htmlFor="Identity card (back)" className="cursor-pointer">
                     {formData.identityCard ? (
                       <>
                         <img
-                          src={URL.createObjectURL(formData.identityCard)}
-                          alt="Civil Code"
-                          className=" object-cover   w-[200px] h-[100px]  "
+                          // src={URL.createObjectURL(formData.identityCard)}
+                          src={getPreviewImg(formData.identityCard)}
+                          alt="Identity card (back)"
+                          className=" object-contain   w-[200px] h-[100px]  "
                           onClick={(e) => e.stopPropagation()}
                         />
 
@@ -616,7 +630,7 @@ const CustomerRegStepFirst = () => {
                     )}
                     <input
                       id="identityCard"
-                      type="file"
+                      type="file"   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                       ref={identityCardRef}
                       style={{ display: "none" }}
                       onChange={(e) => handleFileChange(e, "identityCard")}
@@ -660,9 +674,10 @@ const CustomerRegStepFirst = () => {
                   >
                     {formData.vehicleCertificate ? (
                       <img
-                        src={URL.createObjectURL(formData.vehicleCertificate)}
-                        alt="Civil Code"
-                        className=" object-cover  w-[200px] h-[100px]  "
+                        // src={URL.createObjectURL(formData.vehicleCertificate)}
+                        src={getPreviewImg(formData.vehicleCertificate)}
+                        alt="vehicleCertificate"
+                        className=" object-contain  w-[200px] h-[100px]  "
                         onClick={(e) => e.stopPropagation()}
 
                       />
@@ -678,7 +693,7 @@ const CustomerRegStepFirst = () => {
 
                     <input
                       id="vehicleCertificate"
-                      type="file"
+                      type="file"   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                       ref={vehicleCertificateRef}
                       style={{ display: "none" }}
                       onChange={(e) =>
@@ -722,9 +737,9 @@ const CustomerRegStepFirst = () => {
                   <label htmlFor="drivingFront" className="cursor-pointer">
                     {formData.drivingFront ? (
                       <img
-                        src={URL.createObjectURL(formData.drivingFront)}
-                        alt="Civil Code"
-                        className=" object-cover  w-[200px] h-[100px]  "
+                        src={getPreviewImg(formData.drivingFront)}
+                        alt="drivingFront"
+                        className="object-contain  w-[200px] h-[100px]  "
                         onClick={(e) => e.stopPropagation()}
 
                       />
@@ -739,7 +754,7 @@ const CustomerRegStepFirst = () => {
                     )}
                     <input
                       id="drivingFront"
-                      type="file"
+                      type="file"   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                       ref={drivingFrontRef}
                       style={{ display: "none" }}
                       onChange={(e) => handleFileChange(e, "drivingFront")}
@@ -783,9 +798,9 @@ const CustomerRegStepFirst = () => {
                   <label htmlFor="drivingBack" className="cursor-pointer ">
                     {formData.drivingBack ? (
                       <img
-                        src={URL.createObjectURL(formData.drivingBack)}
-                        alt="Civil Code"
-                        className=" object-cover  w-[200px] h-[100px]  "
+                        src={getPreviewImg(formData.drivingBack)}
+                        alt="drivingBack"
+                        className=" object-contain  w-[200px] h-[100px]  "
                          onClick={(e) => e.stopPropagation()}
 
                       />
@@ -800,7 +815,7 @@ const CustomerRegStepFirst = () => {
                     )}
                     <input
                       id="drivingBack"
-                      type="file"
+                      type="file"   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                       ref={drivingBackRef}
                       style={{ display: "none" }}
                       onChange={(e) => handleFileChange(e, "drivingBack")}
