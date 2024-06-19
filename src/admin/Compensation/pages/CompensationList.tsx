@@ -55,7 +55,7 @@ const CompensationList = () => {
 
   React.  useEffect( ()=>{
     setIsLoading(true);
-    axios.get('Quits/List?SearchTypeId=3&SearchValue=all').then((res) =>{
+    axios.get('Quits/List?SearchTypeId=2&SearchValue=all').then((res) =>{
 
       setCompensationListData(res.data.quitsLists);
 

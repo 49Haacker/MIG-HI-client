@@ -62,6 +62,30 @@ const CompensationLayout = () => {
       {isOpen && (
         <>
             <div className={` mobile-view-hemburger w-[500px !important] flex items-center gap-2  overflow-x-scroll lg:overflow-hidden  `}>
+           
+            {/* Reimbursement history */}
+          <Link
+            to={"/compensation/reimbursement-history"}
+            onClick={() =>
+              handleTabClick("/compensation/reimbursement-history")
+            }
+            className={`${
+              activeTab === "/compensation/reimbursement-history" ||
+              activeTab === "/compensation/reimbursement-details"
+                ? "bg-[#FFFFFF]"
+                : "bg-[#F9F9F9]"
+            } hover:bg-[#FFFFFF] rounded-t-2xl p-3 min-w-max lg:min-w-0`}
+          >
+            <h4 className="text-[16px] leading-[16px] text-[#424B5A] font-medium">
+              {/* Reimbursement history */}
+              {location.pathname === "/compensation/reimbursement-history"
+                ? "Нөхөн төлбөрийн дэлгэрэнгүй"
+                : "Нөхөн төлбөрийн дэлгэрэнгүй"}
+              {/* Reimbursement details */}
+            </h4>
+          </Link>
+           
+           
             {/* Send compensation materials */}
             <Link
             to={"/compensation/compensation-materials"}
@@ -80,8 +104,18 @@ const CompensationLayout = () => {
             </h4>
           </Link>
 
-          {/* Reimbursement history */}
-          <Link
+         
+
+        
+        </div></>)} </div></>): ("")}
+
+        {/* tab on top */}
+          <div className="hidden md:block">
+        {/* Send compensation materials, Reimbursement history */}
+        <div className="flex items-center gap-2 overflow-x-scroll lg:overflow-hidden w-[16.5em] sm:w-[29.5em] lg:w-full">
+          
+             {/* Reimbursement history */}
+             <Link
             to={"/compensation/reimbursement-history"}
             onClick={() =>
               handleTabClick("/compensation/reimbursement-history")
@@ -96,19 +130,14 @@ const CompensationLayout = () => {
             <h4 className="text-[16px] leading-[16px] text-[#424B5A] font-medium">
               {/* Reimbursement history */}
               {location.pathname === "/compensation/reimbursement-history"
-                ? "Нөхөн төлбөрийн түүх"
+                ? "Нөхөн төлбөрийн дэлгэрэнгүй"
                 : "Нөхөн төлбөрийн дэлгэрэнгүй"}
               {/* Reimbursement details */}
             </h4>
           </Link>
-
-        
-        </div></>)} </div></>): ("")}
-
-        {/* tab on top */}
-          <div className="hidden md:block">
-        {/* Send compensation materials, Reimbursement history */}
-        <div className="flex items-center gap-2 overflow-x-scroll lg:overflow-hidden w-[16.5em] sm:w-[29.5em] lg:w-full">
+          
+          
+          
           {/* Send compensation materials */}
           <Link
             to={"/compensation/compensation-materials"}
@@ -127,27 +156,7 @@ const CompensationLayout = () => {
             </h4>
           </Link>
 
-          {/* Reimbursement history */}
-          <Link
-            to={"/compensation/reimbursement-history"}
-            onClick={() =>
-              handleTabClick("/compensation/reimbursement-history")
-            }
-            className={`${
-              activeTab === "/compensation/reimbursement-history" ||
-              activeTab === "/compensation/reimbursement-details"
-                ? "bg-[#FFFFFF]"
-                : "bg-[#F9F9F9]"
-            } hover:bg-[#FFFFFF] rounded-t-2xl p-3 min-w-max lg:min-w-0`}
-          >
-            <h4 className="text-[16px] leading-[16px] text-[#424B5A] font-medium">
-              {/* Reimbursement history */}
-              {location.pathname === "/compensation/reimbursement-history"
-                ? "Нөхөн төлбөрийн түүх"
-                : "Нөхөн төлбөрийн дэлгэрэнгүй"}
-              {/* Reimbursement details */}
-            </h4>
-          </Link>
+       
         </div>
         </div>
         {/* body div */}

@@ -3,6 +3,8 @@ import { StepFirst } from ".";
 import StepSecond from "./StepSecond";
 import StepThird from "./StepThird";
 
+
+
 const CompensationMaterials = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -78,9 +80,9 @@ const CompensationMaterials = () => {
 
           {/* currentStep here */}
           <div className="flex w-full">
-            {currentStep === 1 && <StepFirst />}
-            {currentStep === 2 && <StepSecond />}
-            {currentStep === 3 && <StepThird />}
+            {currentStep === 1 && <StepFirst setCurrentStep={setCurrentStep} />}
+            {currentStep === 2 && <StepSecond setCurrentStep={setCurrentStep} />}
+            {currentStep === 3 && <StepThird setCurrentStep={setCurrentStep} />}
           </div>
         </div>
 

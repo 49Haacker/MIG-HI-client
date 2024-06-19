@@ -11,29 +11,51 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import FullPageLoader from "@/components/ui/FullPageLoader";
+
 // import listOfContactDataJson from "../../../../json/adminListOfContactData.json";
 
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
+import axios from "@/axios";
 
 interface ListOfContactData {
-  this_one: string;
-  name: string;
-  register_number: string;
-  phone_number: string;
-  status: string;
+  StatusName: string;
+  LastName: string;
+  FirstName: string;
+  RegisterNo: string;
+  ProductID: string;
+  StatusNameName: string;
 }
 
 const ListContracts = () => {
+  const [loading , setLoading] = React.useState(false);
   const [listOfContactData, setListOfContactData] = React.useState<
     ListOfContactData[]
   >([]);
+
+
+
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
+  const RegisterNo = 'ОЙ99013005';
+
   // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
-    setListOfContactData([]);
+    setLoading(true);
+    axios.get(`Guarantee/List?RegisterNo=${RegisterNo}`).then((res)=>{
+
+      setListOfContactData(res.data);
+
+
+    }).catch((error)=>{
+    setLoading(false);
+      
+    }).then(()=>{
+    setLoading(false);
+
+    });
   }, []);
 
   const handleTypeChange = (value: string) => {
@@ -41,15 +63,20 @@ const ListContracts = () => {
     // console.log("value = ", value);
   };
 
+  
+
+
+
   const filteredData = selectedType
     ? listOfContactData.filter(
-        (listOfContacts) => listOfContacts.status === selectedType
+        (listOfContacts) => listOfContacts.StatusName == selectedType
       )
     : listOfContactData;
 
   return (
     <>
       <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
+        <FullPageLoader isLoading={loading}/>
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
           <div className="grid grid-cols-6 max-[1023px]:grid-cols-8 min-[1224px]:grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
             {/* This one */}
@@ -111,10 +138,10 @@ const ListContracts = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem
-                      value="Идэвхитэй"
+                      value="Идэвхтэй"
                       className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
                     >
-                      Идэвхитэй
+                      Идэвхтэй
                     </SelectItem>
                     <SelectItem
                       value="Идэвхигүй"
@@ -140,31 +167,31 @@ const ListContracts = () => {
               <div
                 key={index}
                 className={`grid grid-cols-6 max-[1023px]:grid-cols-8 min-[1224px]:grid-cols-8 items-center justify-start px-3 py-2 w-full h-[52px] cursor-pointer ${
-                  items.status === "Идэвхигүй" && "bg-[#F3F7F9]"
+                  items.StatusName === "Идэвхигүй" && "bg-[#F3F7F9]"
                 }`}
               >
                 <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                  {items.this_one}
+                  {items.LastName}
                 </span>
                 <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                  {items.name}
+                  {items.FirstName}
                 </span>
                 <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                  {items.register_number}
+                  {items.RegisterNo}
                 </span>
                 <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                  {items.phone_number}
+                  {items.ProductID}
                 </span>
 
                 <div className=" w-full">
                   <Button
                     className={`rounded-full h-[24px] w-[83px] ${
-                      items.status === "Идэвхитэй"
+                      items.StatusName === "Идэвхитэй"
                         ? "bg-[#00A27B29] hover:bg-[#00A27A37] text-[#00A27B]"
                         : "bg-[#FF5C5E29] hover:bg-[#FF5C4F18] text-[#FF5C5E]"
                     }`}
                   >
-                    {items.status}
+                    {items.StatusName}
                   </Button>
                 </div>
 

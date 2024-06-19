@@ -21,7 +21,7 @@ const SideNavbar = () => {
 
     // Compensation
     {
-      path: "/compensation/compensation-materials",
+      path: "/compensation/reimbursement-history",
       text: "Нөхөн төлбөр",
       image: "/assets/customer/sidenavbar/sideCompensation.svg",
       focusImage: "/assets/customer/sidenavbar/sideCompensationLight.svg",

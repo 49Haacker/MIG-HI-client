@@ -52,14 +52,19 @@ const ReimbursementHistory = () => {
   }, []); 
 
   React.useEffect(() => {
+    setLoading(true); 
     if (registerNumber) {
-      axios.get(`Quits/List?SearchTypeId=3&SearchValue=${registerNumber}`)
+      axios.get(`Quits/List?SearchTypeId=2&SearchValue=${registerNumber}`)
         .then((res) => {
           console.log(res.data);
           setReimbursementData(res.data.quitsLists);
+    setLoading(false); 
+
         })
         .catch((error) => {
           console.error("Error fetching quits list:", error);
+           setLoading(false); 
+
         });
     }
   }, [registerNumber]);

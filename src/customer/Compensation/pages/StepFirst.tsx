@@ -65,8 +65,8 @@ const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
         .get(`Guarantee/List?RegisterNo=${registerNumber}`)
         // .get(`Guarantee/List?RegisterNo=НМ66040816`)
         .then((response) => {
-          console.info('Axios response', response.data);
-          setInsuranceData(response.data);
+          const filteredData = response.data.filter((item: { ProductID: string; }) => item.ProductID == '1807060001');
+          setInsuranceData(filteredData);
           setLoading(false);
         })
         .catch((error) => {
