@@ -1,0 +1,164 @@
+import { Label } from "@/components/ui/label";
+import * as React from "react";
+import axios from "@/axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import FullPageLoader from "@/components/ui/FullPageLoader";
+
+interface EmployeeData {
+  name: string;
+  ProductName: string;
+  RegisterNo: string;
+  country: string;
+  city: string;
+  BeginDate: string;
+  EndDate: string;
+  Rate: string;
+  StatusName: string;
+  LastName: string;
+  FirstName: string;
+  ContractDetailId: string;
+  ContractId: string;
+  ContractTypeId: string;
+  PayAmount: string;
+  ProductCode: string;
+  ProductID: string;
+}
+
+interface StepData {
+  insurance: string;
+  message: string;
+  amount: string;
+}
+interface StepFirstProps {
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  // setStepData: React.Dispatch<React.SetStateAction<StepData>>;
+  setStepData: (data: React.SetStateAction<StepData>) => void;
+  stepData: StepData;
+}
+
+const StepFirst: React.FC<StepFirstProps> = ({
+  setCurrentStep,
+  setStepData,
+  stepData,
+}) => {
+  const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
+  const [registerNumber, setRegisterNumber] = React.useState<string | null>("");
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    setLoading(true); // Ensure loading is true before fetching
+    axios
+      .get("current-customer")
+      .then((response) => {
+        setRegisterNumber(response.data.customer.RegisterNo);
+        setLoading(false);
+        console.info(error);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []); // No dependencies, this effect runs only once on component mount
+
+  React.useEffect(() => {
+    if (registerNumber) {
+      // Ensure registerNumber is not empty or undefined
+      setLoading(true); // Set loading before fetching
+
+      axios
+        .get(`Guarantee/List?RegisterNo=${registerNumber}`)
+        // .get(`Guarantee/List?RegisterNo=НМ66040816`)
+        .then((response) => {
+          const filteredData = response.data.filter(
+            (item: { ProductID: string }) => item.ProductID == "1807060001"
+          );
+          setInsuranceData(filteredData);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    }
+  }, [registerNumber]);
+
+  const handleSelectChange = (value: string) => {
+    // Update setStepData to include all StepData properties
+    setStepData((prevStepData) => ({
+      ...prevStepData,
+      insurance: value,
+    }));
+  };
+
+  const handleTextareaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    // Update setStepData to include all StepData properties
+    setStepData((prevStepData) => ({
+      ...prevStepData,
+      message: event.target.value,
+    }));
+  };
+
+  const isStepValid =
+    stepData.insurance !== "" && stepData.message.trim().length >= 20;
+
+  return (
+    <>
+      <div className="flex gap-8 flex-col justify-between w-full">
+        <div className="flex gap-2 flex-col sm:flex-row w-full">
+          <FullPageLoader isLoading={loading} />
+
+          <div className="w-full sm:w-1/2">
+            <Label className="text-[#424B5A]">Идэвхитэй гэрээнээс сонгох</Label>
+            <Select onValueChange={handleSelectChange}>
+              <SelectTrigger className="focus:ring-1 flex items-center justify-between focus:ring-[#B3CFD8] focus:ring-offset-[#B3CFD8]">
+                <SelectValue placeholder="Даатгал сонгох" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {insuranceData.map((option, index) => (
+                  <SelectItem key={index} value={index.toString()}>
+                    {option.ProductName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-full sm:w-1/2">
+            <Label className="text-[#424B5A]">
+              Нөхөн төлбөрийн тохиолдлын товч агуулга
+            </Label>
+            <Textarea
+              placeholder="мессежээ энд бичнэ үү"
+              value={stepData.message}
+              onChange={handleTextareaChange}
+              className="focus:ring-1 focus:ring-[#B3CFD8] focus:ring-offset-[#B3CFD8]"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end w-full">
+          <button
+            onClick={() => setCurrentStep(2)}
+            className="text-[#FFFFFF] bg-[#005F7E] hover:bg-[#004F6F] p-2 rounded-md"
+            disabled={!isStepValid}
+          >
+            Үргэлжлүүлэх
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default StepFirst;

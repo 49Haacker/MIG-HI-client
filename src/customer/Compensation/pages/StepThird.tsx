@@ -3,10 +3,9 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import axios from "@/axios";
 import pdfIcon from "@/assets/eclaim/pdf.png";
 import wordIcon from "@/assets/eclaim/word.png";
-import FullPageLoader from '../../../components/ui/FullPageLoader';
+import FullPageLoader from "../../../components/ui/FullPageLoader";
 import React from "react";
-import { ToastContainer, toast } from 'react-toastify';
-
+import { ToastContainer, toast } from "react-toastify";
 
 interface Section {
   id: number;
@@ -22,6 +21,17 @@ interface QuitImage {
   F4?: string; // Optional if you want to include base64 image data
 }
 
+interface StepData {
+  insurance: string;
+  message: string;
+  amount: string;
+}
+
+interface StepThirdProps {
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  stepData: StepData;
+}
+
 const convertFileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -31,16 +41,26 @@ const convertFileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-const StepThird = () => {
-const [isLoading, setIsLoading] = React.useState<boolean>(false);
+const StepThird: React.FC<StepThirdProps> = ({ setCurrentStep, stepData }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const [sections, setSections] = useState<Section[]>([
     { id: 1, title: "1. Нөхөн төлбөрийн маягт", images: [], files: [] },
     { id: 2, title: "2. Нөхөн төлбөр хүсэх хуудас", images: [], files: [] },
-    { id: 3, title: "3. Эмчийн онош, шинжилгээ, дүгнэлт", images: [], files: [] },
+    {
+      id: 3,
+      title: "3. Эмчийн онош, шинжилгээ, дүгнэлт",
+      images: [],
+      files: [],
+    },
     { id: 4, title: "4. Төлбөр төлсөн и-баримтууд", images: [], files: [] },
-    { id: 5, title: "5. Бусад /Эмийн жор, жорын дагуух худалдан авалтууд/", images: [], files: [] },
+    {
+      id: 5,
+      title: "5. Бусад /Эмийн жор, жорын дагуух худалдан авалтууд/",
+      images: [],
+      files: [],
+    },
   ]);
 
   const handleImageClick = (index: number) => {
@@ -49,7 +69,10 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
     }
   };
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>, sectionId: number) => {
+  const handleFileChange = async (
+    e: ChangeEvent<HTMLInputElement>,
+    sectionId: number
+  ) => {
     const files = Array.from(e.target.files || []);
     const newImages = files.map((file) => URL.createObjectURL(file));
 
@@ -65,7 +88,11 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
     setSections((prevSections) =>
       prevSections.map((section) =>
         section.id === sectionId
-          ? { ...section, images: [...section.images, ...newImages], files: [...section.files, ...files] }
+          ? {
+              ...section,
+              images: [...section.images, ...newImages],
+              files: [...section.files, ...files],
+            }
           : section
       )
     );
@@ -76,10 +103,10 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
       prevSections.map((section) =>
         section.id === sectionId
           ? {
-            ...section,
-            images: section.images.filter((_, i) => i !== index),
-            files: section.files.filter((_, i) => i !== index),
-          }
+              ...section,
+              images: section.images.filter((_, i) => i !== index),
+              files: section.files.filter((_, i) => i !== index),
+            }
           : section
       )
     );
@@ -109,15 +136,16 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
       formData.append("f12", "test"); // Additional information
       formData.append("f13", "100000"); // Claimed amount
 
-      const imagePromises: Promise<QuitImage>[] = sections.flatMap((section, sectionIndex) =>
-        section.files.map((file) =>
-          convertFileToBase64(file).then((base64Image) => ({
-            F1: `${sectionIndex + 1}`, // Assuming F1 needs to be a string
-            F2: `TEST ${sectionIndex + 1}`,
-            F3: file.name,
-            F4: base64Image.split(",")[1], // Remove the base64 prefix if necessary
-          }))
-        )
+      const imagePromises: Promise<QuitImage>[] = sections.flatMap(
+        (section, sectionIndex) =>
+          section.files.map((file) =>
+            convertFileToBase64(file).then((base64Image) => ({
+              F1: `${sectionIndex + 1}`, // Assuming F1 needs to be a string
+              F2: `TEST ${sectionIndex + 1}`,
+              F3: file.name,
+              F4: base64Image.split(",")[1], // Remove the base64 prefix if necessary
+            }))
+          )
       );
 
       const QUITSIMAGES: QuitImage[] = await Promise.all(imagePromises);
@@ -133,20 +161,25 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
         }
       });
 
+      formData.append("insurance", stepData.insurance);
+      formData.append("message", stepData.message);
+      formData.append("amount", stepData.amount);
+
       const response = await axios.post("/Quits/Insert", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
 
-      if(response){
+      if (response) {
         setIsLoading(false);
       }
 
       toast.success(response.data.message);
+      setCurrentStep(4);
 
       console.log("Response:", response.data);
-    } catch (error:any) {
+    } catch (error: any) {
       setIsLoading(false);
       const errorIs = error.response.data.error;
       toast.error(errorIs);
@@ -158,7 +191,7 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
   return (
     <>
       <div className="flex justify-between flex-col w-full mt-8">
-    <FullPageLoader isLoading={isLoading} />
+        <FullPageLoader isLoading={isLoading} />
 
         <div className="flex gap-8 flex-col w-full">
           <div className="flex flex-col gap-4">
@@ -166,53 +199,75 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
               Нөхөн төлбөрийн матерал хуулах
             </h1>
             <p className="text-[#8CAAB1] font-normal leading-4">
-              **Та оруулж байгаа бичиг баримтын зургийг тод гаргацтай авч оруулна уу. Мөн (<span className="text-red-500">*</span>)-оор тэмдэглэсэн талбарыг заавал бөглөнө үү.
+              **Та оруулж байгаа бичиг баримтын зургийг тод гаргацтай авч
+              оруулна уу. Мөн (<span className="text-red-500">*</span>)-оор
+              тэмдэглэсэн талбарыг заавал бөглөнө үү.
             </p>
           </div>
 
           {sections.map((section, sectionIndex) => (
             <div key={section.id} className="flex flex-col w-full">
-              <div className={`gap-2 my-3 ${section.images.length > 0 ? "flex w-full flex-wrap" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`}>
+              <div
+                className={`gap-2 my-3 ${
+                  section.images.length > 0
+                    ? "flex w-full flex-wrap"
+                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                }`}
+              >
                 {section.images.length > 0 ? (
                   <>
                     <div className="w-full md:w-auto">
                       <div className="flex flex-col gap-2">
                         <span className="text-[#424B5A] text-md font-normal leading-4">
-                          {section.title}  {sectionIndex > 0 ? (<span className="text-[red]">*</span>) : ("")}
+                          {section.title}{" "}
+                          {sectionIndex > 0 ? (
+                            <span className="text-[red]">*</span>
+                          ) : (
+                            ""
+                          )}
                         </span>
-                        <div>
-
-                        </div>
+                        <div></div>
                         <div className="flex flex-row flex-wrap gap-2 mt-2 w-full">
                           {section.images.map((image, index) => (
                             <div key={index} className="w-full md:w-auto ">
                               <span className="flex justify-between">
                                 <span className="mb-1">{`preview-${index}`}</span>
-                                <button className="p-1" onClick={() => removeImage(section.id, index)}>
+                                <button
+                                  className="p-1"
+                                  onClick={() => removeImage(section.id, index)}
+                                >
                                   <RiDeleteBinLine className="text-red-600 text-1xl" />
                                 </button>
                               </span>
-                              <div className="bg-[#E6EFF2] h-[120px] md:px-[90px] mx:w-[337px] rounded-lg p-2 cursor-pointer" onClick={() => handleImageClick(sectionIndex)}>
+                              <div
+                                className="bg-[#E6EFF2] h-[120px] md:px-[90px] mx:w-[337px] rounded-lg p-2 cursor-pointer"
+                                onClick={() => handleImageClick(sectionIndex)}
+                              >
                                 {/* <img
                                   src={image}
                                   alt={`preview-${index}`}
                                   className="object-cover rounded-lg h-[104px] w-full md:w-auto "
                                   onClick={(e) => e.stopPropagation()}
                                 /> */}
-                                {section.files[index].type === 'image/png' || section.files[index].type === 'image/jpg' ? (
+                                {section.files[index].type === "image/png" ||
+                                section.files[index].type === "image/jpg" ? (
                                   <img
                                     src={image}
                                     alt={`preview-${index}`}
                                     className="object-cover rounded-lg h-[104px] w-full md:w-auto"
                                     onClick={(e) => e.stopPropagation()}
                                   />
-                                ) : section.files[index].type === 'application/pdf' ? (
+                                ) : section.files[index].type ===
+                                  "application/pdf" ? (
                                   <img
                                     src={pdfIcon}
                                     alt="PDF Icon"
                                     className="object-cover rounded-lg h-[104px] w-full md:w-auto"
                                   />
-                                ) : section.files[index].type === 'application/msword' || section.files[index].type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? (
+                                ) : section.files[index].type ===
+                                    "application/msword" ||
+                                  section.files[index].type ===
+                                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
                                   <img
                                     src={wordIcon}
                                     alt="Word Icon"
@@ -233,7 +288,10 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                               onClick={() => handleImageClick(sectionIndex)}
                               style={{ position: "relative" }}
                             >
-                              <label htmlFor={`imageInput-${section.id}`} className="cursor-pointer">
+                              <label
+                                htmlFor={`imageInput-${section.id}`}
+                                className="cursor-pointer"
+                              >
                                 <img
                                   src="/assets/customer/employee/uploadIcon.svg"
                                   alt="uploadIcon"
@@ -243,12 +301,21 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                                 <input
                                   id={`imageInput-${section.id}`}
                                   type="file"
-                                  ref={(el) => (inputRefs.current[sectionIndex] = el!)}
+                                  ref={(el) =>
+                                    (inputRefs.current[sectionIndex] = el!)
+                                  }
                                   style={{ display: "none" }}
-                                  onChange={(e) => handleFileChange(e, section.id)}
+                                  onChange={(e) =>
+                                    handleFileChange(e, section.id)
+                                  }
                                 />
                               </label>
-                              <span className="text-xs text-[#005F7E] absolute bottom-4"  onClick={(e) => e.stopPropagation()}>Хуулах</span>
+                              <span
+                                className="text-xs text-[#005F7E] absolute bottom-4"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Хуулах
+                              </span>
                             </div>
                           ) : null}
 
@@ -257,7 +324,10 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                             onClick={() => handleImageClick(sectionIndex)}
                             style={{ position: "relative" }}
                           >
-                            <label htmlFor={`imageInput-${section.id}`} className="cursor-pointer" >
+                            <label
+                              htmlFor={`imageInput-${section.id}`}
+                              className="cursor-pointer"
+                            >
                               <img
                                 src="/assets/customer/employee/add.svg"
                                 alt="uploadIcon"
@@ -267,12 +337,21 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                               <input
                                 id={`imageInput-${section.id}`}
                                 type="file"
-                                ref={(el) => (inputRefs.current[sectionIndex] = el!)}
+                                ref={(el) =>
+                                  (inputRefs.current[sectionIndex] = el!)
+                                }
                                 style={{ display: "none" }}
-                                onChange={(e) => handleFileChange(e, section.id)}
+                                onChange={(e) =>
+                                  handleFileChange(e, section.id)
+                                }
                               />
                             </label>
-                            <span className="text-xs text-[#005F7E] absolute bottom-4"  onClick={(e) => e.stopPropagation()}>Нэмэх</span>
+                            <span
+                              className="text-xs text-[#005F7E] absolute bottom-4"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Нэмэх
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -281,13 +360,24 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                 ) : (
                   <>
                     <div className="flex flex-col gap-2 sm:whitespace-nowrap">
-                      <span className="text-[#424B5A] text-md font-normal leading-4 pb-3">{section.title} {sectionIndex > 0 ? (<span className="text-[red]">*</span>) : ("")} </span>
+                      <span className="text-[#424B5A] text-md font-normal leading-4 pb-3">
+                        {section.title}{" "}
+                        {sectionIndex > 0 ? (
+                          <span className="text-[red]">*</span>
+                        ) : (
+                          ""
+                        )}{" "}
+                      </span>
                       <div
                         className="bg-[#E6EFF2] h-[120px] w-full max-w-sm flex flex-col justify-center items-center rounded-lg p-2 relative cursor-pointer"
                         onClick={() => handleImageClick(sectionIndex)}
                         style={{ position: "relative" }}
                       >
-                        <label htmlFor={`imageInput-${section.id}`} className="cursor-pointer"  onClick={(e) => e.stopPropagation()}>
+                        <label
+                          htmlFor={`imageInput-${section.id}`}
+                          className="cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <img
                             src="/assets/customer/employee/uploadIcon.svg"
                             alt="uploadIcon"
@@ -297,12 +387,19 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                           <input
                             id={`imageInput-${section.id}`}
                             type="file"
-                            ref={(el) => (inputRefs.current[sectionIndex] = el!)}
+                            ref={(el) =>
+                              (inputRefs.current[sectionIndex] = el!)
+                            }
                             style={{ display: "none" }}
                             onChange={(e) => handleFileChange(e, section.id)}
                           />
                         </label>
-                        <span className="text-xs text-[#005F7E] absolute bottom-4"  onClick={(e) => e.stopPropagation()}>Хуулах</span>
+                        <span
+                          className="text-xs text-[#005F7E] absolute bottom-4"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Хуулах
+                        </span>
                       </div>
                     </div>
                     {sectionIndex == 3 ? (
@@ -311,22 +408,33 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                         onClick={() => handleImageClick(sectionIndex)}
                         style={{ position: "relative" }}
                       >
-                        <label htmlFor={`imageInput-${section.id}`} className="cursor-pointer"  onClick={(e) => e.stopPropagation()}>
+                        <label
+                          htmlFor={`imageInput-${section.id}`}
+                          className="cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <img
                             src="/assets/customer/employee/uploadIcon.svg"
                             alt="uploadIcon"
                             className="absolute inset-0 m-auto"
                             onClick={(e) => e.stopPropagation()}
                           />
-                          <input  
+                          <input
                             id={`imageInput-${section.id}`}
                             type="file"
-                            ref={(el) => (inputRefs.current[sectionIndex] = el!)}
+                            ref={(el) =>
+                              (inputRefs.current[sectionIndex] = el!)
+                            }
                             style={{ display: "none" }}
                             onChange={(e) => handleFileChange(e, section.id)}
                           />
                         </label>
-                        <span className="text-xs text-[#005F7E] absolute bottom-4"  onClick={(e) => e.stopPropagation()}>Хуулах</span>
+                        <span
+                          className="text-xs text-[#005F7E] absolute bottom-4"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Хуулах
+                        </span>
                       </div>
                     ) : null}
                     <div
@@ -334,7 +442,10 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                       onClick={() => handleImageClick(sectionIndex)}
                       style={{ position: "relative" }}
                     >
-                      <label htmlFor={`imageInput-${section.id}`} className="cursor-pointer">
+                      <label
+                        htmlFor={`imageInput-${section.id}`}
+                        className="cursor-pointer"
+                      >
                         <img
                           src="/assets/customer/employee/add.svg"
                           alt="uploadIcon"
@@ -349,8 +460,13 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
                           onChange={(e) => handleFileChange(e, section.id)}
                         />
                       </label>
-                         
-                          <span className="text-xs text-[#005F7E] absolute bottom-4"  onClick={(e) => e.stopPropagation()}   >Нэмэх</span>
+
+                      <span
+                        className="text-xs text-[#005F7E] absolute bottom-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Нэмэх
+                      </span>
                     </div>
                   </>
                 )}
@@ -367,16 +483,16 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
             </button>
           </div>
           <ToastContainer
-          position="top-right" // Position in the top-right corner
-          autoClose={3000} // Auto-close after 3 seconds
-          hideProgressBar={false} // Show the progress bar
-          newestOnTop={true} // Show new notifications on top
-          closeOnClick // Close on click
-          rtl={false} // Right-to-left or left-to-right
-          pauseOnFocusLoss // Pause when the window loses focus
-          draggable // Allow the toast to be dragged
-          pauseOnHover // Pause when hovering over the toast
-        />
+            position="top-right" // Position in the top-right corner
+            autoClose={3000} // Auto-close after 3 seconds
+            hideProgressBar={false} // Show the progress bar
+            newestOnTop={true} // Show new notifications on top
+            closeOnClick // Close on click
+            rtl={false} // Right-to-left or left-to-right
+            pauseOnFocusLoss // Pause when the window loses focus
+            draggable // Allow the toast to be dragged
+            pauseOnHover // Pause when hovering over the toast
+          />
         </div>
       </div>
     </>

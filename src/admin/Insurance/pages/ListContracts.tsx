@@ -29,43 +29,36 @@ interface ListOfContactData {
 }
 
 const ListContracts = () => {
-  const [loading , setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [listOfContactData, setListOfContactData] = React.useState<
     ListOfContactData[]
   >([]);
 
-
-
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
-  const RegisterNo = 'ОЙ99013005';
+  const RegisterNo = "ОЙ99013005";
 
   // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
     setLoading(true);
-    axios.get(`Guarantee/List?RegisterNo=${RegisterNo}`).then((res)=>{
-
-      setListOfContactData(res.data);
-
-
-    }).catch((error)=>{
-    setLoading(false);
-      
-    }).then(()=>{
-    setLoading(false);
-
-    });
+    axios
+      .get(`Guarantee/List?RegisterNo=${RegisterNo}`)
+      .then((res) => {
+        setListOfContactData(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      })
+      .then(() => {
+        setLoading(false);
+      });
   }, []);
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);
     // console.log("value = ", value);
   };
-
-  
-
-
 
   const filteredData = selectedType
     ? listOfContactData.filter(
@@ -76,7 +69,7 @@ const ListContracts = () => {
   return (
     <>
       <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
-        <FullPageLoader isLoading={loading}/>
+        <FullPageLoader isLoading={loading} />
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
           <div className="grid grid-cols-6 max-[1023px]:grid-cols-8 min-[1224px]:grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
             {/* This one */}
