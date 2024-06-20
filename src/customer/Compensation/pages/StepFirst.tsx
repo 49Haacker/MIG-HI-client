@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import * as React from "react";
-import axios from '@/axios'
+import axios from "@/axios";
 import {
   Select,
   SelectContent,
@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import FullPageLoader from "@/components/ui/FullPageLoader";
-
- 
 
 interface EmployeeData {
   name: string;
@@ -23,33 +21,30 @@ interface EmployeeData {
   EndDate: string;
   Rate: string;
   StatusName: string;
-  LastName: string,
-  FirstName: string,
-  ContractDetailId: string,
-  ContractId: string,
-  ContractTypeId: string,
-  PayAmount: string,
-  ProductCode: string,
-  ProductID: string
+  LastName: string;
+  FirstName: string;
+  ContractDetailId: string;
+  ContractId: string;
+  ContractTypeId: string;
+  PayAmount: string;
+  ProductCode: string;
+  ProductID: string;
 }
 
 const StepFirst = () => {
-
-
-const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
-  const [registerNumber , setRegisterNumber] = React.useState<string | null>('');
+  const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
+  const [registerNumber, setRegisterNumber] = React.useState<string | null>("");
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  
-  React.useEffect(() => {
 
+  React.useEffect(() => {
     setLoading(true); // Ensure loading is true before fetching
-    axios.get('current-customer')
+    axios
+      .get("current-customer")
       .then((response) => {
         setRegisterNumber(response.data.customer.RegisterNo);
         setLoading(false);
         console.info(error);
-
       })
       .catch((error) => {
         setError(error.message);
@@ -57,15 +52,17 @@ const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
       });
   }, []); // No dependencies, this effect runs only once on component mount
 
-
   React.useEffect(() => {
-    if (registerNumber) { // Ensure registerNumber is not empty or undefined
+    if (registerNumber) {
+      // Ensure registerNumber is not empty or undefined
       setLoading(true); // Set loading before fetching
       axios
         .get(`Guarantee/List?RegisterNo=${registerNumber}`)
         // .get(`Guarantee/List?RegisterNo=НМ66040816`)
         .then((response) => {
-          const filteredData = response.data.filter((item: { ProductID: string; }) => item.ProductID == '1807060001');
+          const filteredData = response.data.filter(
+            (item: { ProductID: string }) => item.ProductID == "1807060001"
+          );
           setInsuranceData(filteredData);
           setLoading(false);
         })
@@ -74,29 +71,26 @@ const [insuranceData, setInsuranceData] = React.useState<EmployeeData[]>([]);
           setLoading(false);
         });
     }
-  }, [registerNumber]); 
+  }, [registerNumber]);
 
-  
   return (
     <>
       <div className="flex gap-2 flex-col sm:flex-row w-full">
-      <FullPageLoader isLoading={loading} />
+        <FullPageLoader isLoading={loading} />
 
         <div className="w-full sm:w-1/2">
-          
           <Label className="text-[#424B5A]">Идэвхитэй гэрээнээс сонгох</Label>
           <Select>
             <SelectTrigger className="focus:ring-1 flex items-center justify-between focus:ring-[#B3CFD8] focus:ring-offset-[#B3CFD8]">
               <SelectValue placeholder="Даатгал сонгох" />
             </SelectTrigger>
             <SelectContent>
-              {insuranceData.map((option,index) => (
+              {insuranceData.map((option, index) => (
                 <SelectItem key={index} value={index.toString()}>
                   {option.ProductName}
                 </SelectItem>
               ))}
             </SelectContent>
-
           </Select>
         </div>
 

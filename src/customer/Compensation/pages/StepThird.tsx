@@ -21,17 +21,6 @@ interface QuitImage {
   F4?: string; // Optional if you want to include base64 image data
 }
 
-interface StepData {
-  insurance: string;
-  message: string;
-  amount: string;
-}
-
-interface StepThirdProps {
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-  stepData: StepData;
-}
-
 const convertFileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -41,7 +30,7 @@ const convertFileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-const StepThird: React.FC<StepThirdProps> = ({ setCurrentStep, stepData }) => {
+const StepThird = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -161,10 +150,6 @@ const StepThird: React.FC<StepThirdProps> = ({ setCurrentStep, stepData }) => {
         }
       });
 
-      formData.append("insurance", stepData.insurance);
-      formData.append("message", stepData.message);
-      formData.append("amount", stepData.amount);
-
       const response = await axios.post("/Quits/Insert", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -176,7 +161,6 @@ const StepThird: React.FC<StepThirdProps> = ({ setCurrentStep, stepData }) => {
       }
 
       toast.success(response.data.message);
-      setCurrentStep(4);
 
       console.log("Response:", response.data);
     } catch (error: any) {

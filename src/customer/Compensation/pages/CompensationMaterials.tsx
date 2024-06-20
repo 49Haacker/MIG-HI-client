@@ -1,7 +1,7 @@
 import { useState } from "react";
-// import { StepFirst } from ".";
-// import StepSecond from "./StepSecond";
-// import StepThird from "./StepThird";
+import StepFirst from "./StepFirst";
+import StepSecond from "./StepSecond";
+import StepThird from "./StepThird";
 
 const CompensationMaterials = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -77,13 +77,11 @@ const CompensationMaterials = () => {
           </div>
 
           {/* currentStep here */}
-          {/* <div className="flex w-full">
-            {currentStep === 1 && <StepFirst setCurrentStep={setCurrentStep} />}
-            {currentStep === 2 && (
-              <StepSecond setCurrentStep={setCurrentStep} />
-            )}
-            {currentStep === 3 && <StepThird setCurrentStep={setCurrentStep} />}
-          </div> */}
+          <div className="flex w-full">
+            {currentStep === 1 && <StepFirst />}
+            {currentStep === 2 && <StepSecond />}
+            {currentStep === 3 && <StepThird />}
+          </div>
         </div>
 
         <div className="flex justify-end w-full">
