@@ -55,12 +55,12 @@ const CompensationList = () => {
 
   React.  useEffect( ()=>{
     setIsLoading(true);
-    axios.get('Quits/List?SearchTypeId=2&SearchValue=all').then((res) =>{
+    axios.get('Quits/List?SearchTypeId=3&SearchValue=all').then((res) =>{
 
-      setCompensationListData(res.data.quitsLists);
+      setCompensationListData(res.data.quitsLists[0]);
 
     }).catch().then(()=>{
-
+        
         setIsLoading(false);
 
     });
@@ -205,7 +205,7 @@ const CompensationList = () => {
                     {items.registerNo}
                   </span>
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px] truncate" >
-                    {items.contractNo}
+                    {items.phoneNo}
                   </span>
 
                   <div className=" w-full col-span-2">

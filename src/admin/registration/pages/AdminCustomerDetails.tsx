@@ -1,13 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect  } from 'react';
 import { useUserContext } from '@/admin/Context/UserData';
 import { Button } from "@/components/ui/button";
+import pdfIcon from "@/assets/eclaim/pdf.png";
+import wordIcon from "@/assets/eclaim/word.png";
+import { useNavigate } from 'react-router-dom';
 
 const AdminCustomerDetails: React.FC = () => {
   const { data } = useUserContext();
-  
+  const navigate  = useNavigate();
   useEffect(() => {
-    console.log(data);
+    checkData();
+    
   }, [data]);
+
+  const checkData = () => {
+    if(data.length <= 0){
+      return navigate('/admin/registration/list');
+    }
+  }
+
+ 
+  const getFileIconOrUrl = (url: string | undefined | null): string => {
+    if (!url) {
+      return "/assets/customer/employee/uploadIcon.svg"; // Default icon if URL is undefined or null
+    }
+  
+    const lowerCaseUrl = url.toLowerCase();
+    
+    if (lowerCaseUrl.endsWith('.pdf')) {
+      return pdfIcon // Replace with actual path to your PDF icon
+    } else if (lowerCaseUrl.endsWith('.doc') || lowerCaseUrl.endsWith('.docx')) {
+      return wordIcon; // Replace with actual path to your Word document icon
+    } else if (lowerCaseUrl.endsWith('.jpg') || lowerCaseUrl.endsWith('.jpeg') || lowerCaseUrl.endsWith('.png') || lowerCaseUrl.endsWith('.gif')) {
+      return url; // Return the image URL directly
+    }
+  
+    return "/assets/customer/employee/uploadIcon.svg"; // Default icon if file type is not recognized
+  };
+  
 
   return (
     <>
@@ -58,7 +88,7 @@ const AdminCustomerDetails: React.FC = () => {
                       <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
                         <a href={user.VehicleCertificate} download>
                           <img
-                            src={user.VehicleCertificate}
+                            src={getFileIconOrUrl(user.VehicleCertificate)}
                             className='h-[90px]'
                             alt="Identity Card Front Side "
                           />
@@ -77,7 +107,7 @@ const AdminCustomerDetails: React.FC = () => {
                       <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
                         <a href={user.IdentitybackCertificate} download>
                           <img
-                            src={user.IdentitybackCertificate}
+                            src={getFileIconOrUrl(user.IdentitybackCertificate)}
                             className='h-[90px]'
                             alt="Identity Card Back Side "
                           />
@@ -98,7 +128,7 @@ const AdminCustomerDetails: React.FC = () => {
                       <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
                         <a href={user.SteeringWheelCertificate} download>
                           <img
-                            src={user.SteeringWheelCertificate}
+                            src={getFileIconOrUrl(user.SteeringWheelCertificate)}
                             className='h-[90px]'
                             alt="Steering Wheel Certificate "
                           />
@@ -116,7 +146,7 @@ const AdminCustomerDetails: React.FC = () => {
                       <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
                         <a href={user.DrivingLinceseback} download>
                           <img
-                            src={user.DrivingLinceseback}
+                            src={getFileIconOrUrl(user.DrivingLinceseback)}
                             className='h-[90px]'
                             alt="Driving Licence Back Side "
                           />
@@ -137,7 +167,7 @@ const AdminCustomerDetails: React.FC = () => {
                       <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
                         <a href={user.CivilWarCertificate} download>
                           <img
-                            src={user.CivilWarCertificate}
+                            src={getFileIconOrUrl(user.CivilWarCertificate)}
                             className='h-[90px]'
                             alt="Civil War Certificate"
                           />

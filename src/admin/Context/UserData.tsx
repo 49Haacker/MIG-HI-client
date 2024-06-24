@@ -2,11 +2,13 @@ import { createContext, useState, useContext, FC, ReactNode } from 'react';
 
 // Define the type for your context data
 interface UserDetails {
+  UserTypeText: string;
+  IsForigner: string;
   LastName: string;
   Name: string;
   RegisterNumber: string;
   PhoneNo: string;
-  VehicleCertificate?: string;
+  VehicleCertificate?: string;  
   IdentitybackCertificate?: string;
   SteeringWheelCertificate?: string;
   DrivingLinceseback?: string;

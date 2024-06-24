@@ -103,7 +103,7 @@ const RegistrationLayout = () => {
           </Link>
 
           {/* List */}
-          {CurrantUserRole === '2' ? (
+          {CurrantUserRole ? (
           <Link
             to="/admin/registration/list"
             onClick={() => handleTabClick("/admin/registration/list")}
@@ -157,7 +157,7 @@ const RegistrationLayout = () => {
           </Link>
 
           {/* List */}
-          {CurrantUserRole === '2' ? (
+          {CurrantUserRole  ? (
           <Link
             to="/admin/registration/list"
             onClick={() => handleTabClick("/admin/registration/list")}

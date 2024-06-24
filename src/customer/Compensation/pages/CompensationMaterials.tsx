@@ -1,14 +1,61 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import StepFirst from "./StepFirst";
 import StepSecond from "./StepSecond";
 import StepThird from "./StepThird";
+import { ToastContainer, toast } from "react-toastify";
+
+interface ReimbursementDataType {
+  lastName?: string;
+  firstName?: string;
+  registerNo?: string;
+  productName?: string;
+  statusName?: string;
+  rate?: number;
+  invoiceAmount?: number;
+}
+
 
 const CompensationMaterials = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [activeContract, setActiveContract] = useState<ReimbursementDataType | null>([]);
+  const [contract, setContractData] = useState<ReimbursementDataType | null>([]);
+  const [price, setPrice] = useState<ReimbursementDataType | null>(null);
+  const [stepThreeData, setStepThreeData] = useState<ReimbursementDataType | null>(null);
+
+  const handleStepFirst = (value: SetStateAction<ReimbursementDataType | null>) => {
+    setActiveContract(value);
+  };
+  const handleContractList = (value: SetStateAction<ReimbursementDataType | null>) => {
+    setContractData(value);
+  };
+
+  const handleStepSecond = (value: SetStateAction<ReimbursementDataType | null> ) => {
+    setPrice(value);
+    setStepThreeData({
+      step1: activeContract,
+      contract:contract,
+      step2: price,
+      
+    });
+  };
+
+
+
 
   const handleNextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
+   
+    if (currentStep === 1 && activeContract !== null) {
+      setCurrentStep((prevStep) => prevStep + 1);
+    } else if (currentStep === 2 && activeContract !== null && price !== null) {
+      setCurrentStep((prevStep) => prevStep + 1);
+    } else {
+      toast.error("Please fill all the fields");
+    }
   };
+  
+
+ 
+
 
   return (
     <>
@@ -77,10 +124,10 @@ const CompensationMaterials = () => {
           </div>
 
           {/* currentStep here */}
-          <div className="flex w-full">
-            {currentStep === 1 && <StepFirst />}
-            {currentStep === 2 && <StepSecond />}
-            {currentStep === 3 && <StepThird />}
+          <div className="flex w-full"> 
+            {currentStep === 1 && <StepFirst firstStepData={handleStepFirst} handleContract={handleContractList}  />}
+            {currentStep === 2 && <StepSecond secondStepData={handleStepSecond} />}
+            {currentStep === 3 && <StepThird stepThreeData={stepThreeData} />}
           </div>
         </div>
 
@@ -94,6 +141,17 @@ const CompensationMaterials = () => {
             </button>
           )}
         </div>
+        <ToastContainer
+            position="top-right" // Position in the top-right corner
+            autoClose={3000} // Auto-close after 3 seconds
+            hideProgressBar={false} // Show the progress bar
+            newestOnTop={true} // Show new notifications on top
+            closeOnClick // Close on click
+            rtl={false} // Right-to-left or left-to-right
+            pauseOnFocusLoss // Pause when the window loses focus
+            draggable // Allow the toast to be dragged
+            pauseOnHover // Pause when hovering over the toast
+          />
       </div>
     </>
   );

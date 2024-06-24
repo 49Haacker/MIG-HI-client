@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "@/axios";
 
 import { FaTrashAlt } from "react-icons/fa";
@@ -14,6 +14,9 @@ import FullPageLoader from "./../../../components/ui/FullPageLoader";
 
 import pdfIcon from "../../../assets/eclaim/pdf.png";
 import wordIcon from "../../../assets/eclaim/word.png";
+
+import { useNavigate } from "react-router-dom";
+
 
 import {
   Form,
@@ -26,6 +29,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useUserContext } from "@/admin/Context/UserData";
 
 const formSchema = z.object({
   lastName: z.string().min(3, {
@@ -50,19 +54,43 @@ interface FormData {
   drivingBack: File | null;
 }
 
-const CustomerRegStepFirst = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
+
+
+const CustomerAndEmployeeEdit = () => {
+
+  const { data } = useUserContext();
+  const navigate = useNavigate();
+  const [isChecked, setIsChecked] = useState(true);
+
+  useEffect(() => {
+    if (!data || data.length <= 0) {
+      navigate('/admin/registration/list');
+    } else {
+      setIsChecked(data[0]?.IsForigner === '0'); 
+    }
+  }, [data]);
+
+
+
+  const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      lastName: "",
-      name: "",
-      RegisterNo: "",
-      phoneNumber: "",
+    defaultValues: data && data.length > 0 ? {
+      lastName: data[0].LastName,
+      name: data[0].Name,
+      RegisterNo:   data[0].IsForigner === '0' ? data[0].RegisterNumber.slice(2) : data[0].RegisterNumber,
+      phoneNumber: data[0].PhoneNo,
+    } : {
+      lastName: '',
+      name: '',
+      RegisterNo: '',
+      phoneNumber: '',
     },
   });
 
+
+ 
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(true);
   const civilCodeRef = useRef<HTMLInputElement>(null);
   const identityCardRef = useRef<HTMLInputElement>(null);
   const vehicleCertificateRef = useRef<HTMLInputElement>(null);
@@ -78,43 +106,7 @@ const CustomerRegStepFirst = () => {
     drivingBack: null,
   });
 
-  const alphabet = [
-    "А",
-    "Б",
-    "В",
-    "Г",
-    "Д",
-    "Е",
-    "Ё",
-    "Ж",
-    "З",
-    "И",
-    "Й",
-    "К",
-    "Л",
-    "М",
-    "Н",
-    "О",
-    "Ө",
-    "П",
-    "Р",
-    "С",
-    "Т",
-    "У",
-    "Ү",
-    "Ф",
-    "Х",
-    "Ц",
-    "Ч",
-    "Ш",
-    "Щ",
-    "Ъ",
-    "Ы",
-    "Ь",
-    "Э",
-    "Ю",
-    "Я",
-  ];
+  const alphabet = ["А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М","Н","О","Ө","П","Р","С","Т","У","Ү","Ф","Х","Ц","Ч","Ш","Щ","Ъ","Ы","Ь","Э","Ю","Я"];
 
   const handleDelete = (
     fieldName: string,
@@ -129,8 +121,8 @@ const CustomerRegStepFirst = () => {
     }
   };
 
-  const [selectedLater1, setSelectedLater1] = useState<string>("P");
-  const [selectedLater2, setSelectedLater2] = useState<string>("Д");
+  const [selectedLater1, setSelectedLater1] = useState<string>( data.length > 0 ? data[0].RegisterNumber.slice(0, 1) : "А");
+  const [selectedLater2, setSelectedLater2] = useState<string>(data.length > 0 ? data[0].RegisterNumber.slice(1, 2) : "Ц");
   const [isOpen1, setIsOpen1] = useState<boolean>(false);
   const [isOpen2, setIsOpen2] = useState<boolean>(false);
 
@@ -220,12 +212,21 @@ const CustomerRegStepFirst = () => {
         selectedLater1 + selectedLater2 + values.RegisterNo.slice(0, 8);
     }
 
-    const data = new FormData();
-    data.append("LastName", values.lastName.toUpperCase());
-    data.append("FirstName", values.name.toUpperCase());
-    data.append("PhoneNo", values.phoneNumber.toUpperCase());
-    data.append("RegisterNo", RegisterNumber.toUpperCase());
-    data.append("IsForigner", isChecked ? "0" : "1");
+    const data1 = new FormData();
+    data1.append("LastName", values.lastName.toUpperCase());
+    data1.append("FirstName", values.name.toUpperCase());
+    data1.append("PhoneNo", values.phoneNumber);
+    data1.append("RegisterNo", RegisterNumber.toUpperCase());
+    data1.append("IsForigner", isChecked ? "0" : "1");
+
+    if(data[0].UserTypeText == 'User'){
+      data1.append("userType", '0');
+    }
+
+    if(data[0].UserTypeText == 'Manager'){
+      data1.append("userType", '1');
+    }
+
 
     // Map frontend image keys to backend keys
     const imageKeyMap: Record<string, string> = {
@@ -240,35 +241,16 @@ const CustomerRegStepFirst = () => {
     Object.entries(formData).forEach(([key, value]) => {
       const backendKey = imageKeyMap[key];
       if (backendKey && value !== null) {
-        data.append(backendKey, value);
+        data1.append(backendKey, value);
       }
     });
 
     axios
-      .post("customer-register", data)
+      .post(`customers-edit-profile?PhoneNo=${data[0].PhoneNo}`, data1)
       .then((response) => {
         console.log("Success:", response.data);
         setIsLoading(false);
         toast.success(response.data.message);
-
-        // Reset input values to empty after successful submission
-        // setInputValues({
-        //   lastName: "",
-        //   firstName: "",
-        //   phoneNumber: "",
-        //   RegisterNo: "",
-        // });
-
-        // Reset formData to empty after successful submission
-        setFormData({
-          civilCode: null,
-          identityCard: null,
-          vehicleCertificate: null,
-          drivingFront: null,
-          drivingBack: null,
-        });
-
-        setIsChecked(true);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -278,8 +260,30 @@ const CustomerRegStepFirst = () => {
     // console.log("form was submited");
   };
 
+  const getFileIconOrUrl = (url: string | undefined | null): string => {
+    if (!url) {
+      return "/assets/customer/employee/uploadIcon.svg"; // Default icon if URL is undefined or null
+    }
+  
+    const lowerCaseUrl = url.toLowerCase();
+    
+    if (lowerCaseUrl.endsWith('.pdf')) {
+      return pdfIcon // Replace with actual path to your PDF icon
+    } else if (lowerCaseUrl.endsWith('.doc') || lowerCaseUrl.endsWith('.docx')) {
+      return wordIcon; // Replace with actual path to your Word document icon
+    } else if (lowerCaseUrl.endsWith('.jpg') || lowerCaseUrl.endsWith('.jpeg') || lowerCaseUrl.endsWith('.png') || lowerCaseUrl.endsWith('.gif')) {
+      return url; // Return the image URL directly
+    }
+  
+    return "/assets/customer/employee/uploadIcon.svg"; // Default icon if file type is not recognized
+  };
+  
+
+ 
+
   return (
     <>
+    {data.length > 0 ?(<>
       <div className="flex flex-col justify-between w-full">
         <FullPageLoader isLoading={isLoading} />
         <Form {...form}>
@@ -289,7 +293,7 @@ const CustomerRegStepFirst = () => {
           >
             <div className="flex flex-col w-full">
               <div className="flex flex-col w-full">
-                <div className="flex flex-col sm:flex-row gap-4 w-full mt-8">
+                <div className="flex flex-col sm:flex-row gap-4 w-full ">
                   <div className="flex flex-col gap-2 w-full">
                     <FormField
                       control={form.control}
@@ -337,18 +341,6 @@ const CustomerRegStepFirst = () => {
                   </div>
 
                   <div className="flex flex-col gap-2 w-full">
-                    {/* <Label className="text-[#424B5A] font-medium text-[14px] leading-[17.36px]">
-                  Утасны дугаар <span className="text-[red]">*</span>
-                </Label>
-                <Input
-                 type="text"
-                  placeholder="Утасны дугаар оруулах..."
-                  className="text-[#424B5A] placeholder:text-[#B3CFD8] font-medium text-[14px] leading-[14px]"
-                  value={inputValues.phoneNumber}
-                  onChange={(e) =>
-                    handleInputChange(e.target.value, "phoneNumber")
-                  }
-                /> */}
                     <FormField
                       control={form.control}
                       name="phoneNumber"
@@ -536,12 +528,6 @@ const CustomerRegStepFirst = () => {
                       {formData.civilCode ? (
                         <button
                           className="absolute top-1 z-[999] right-[10px]"
-                          // onClick={() => {
-                          //   setFormData((prevData) => ({
-                          //     ...prevData,
-                          //     civilCode: null,
-                          //   }));
-                          // }}
                           onClick={() =>
                             handleDelete("civilCode", civilCodeRef)
                           }
@@ -560,9 +546,9 @@ const CustomerRegStepFirst = () => {
                       style={{ position: "relative" }}
                     >
                       <label htmlFor="civilCode" className="cursor-pointer">
-                        {formData.civilCode ? (
+                        {data[0].CivilWarCertificate != '' ? (
                           <img
-                            src={getPreviewImg(formData.civilCode) || undefined}
+                            src={ !formData.civilCode ?   getFileIconOrUrl(data[0].CivilWarCertificate) : getPreviewImg(formData.civilCode) }
                             alt="Civil Code"
                             className="object-contain w-[200px] h-[100px]"
                             onClick={(e) => e.stopPropagation()}
@@ -570,7 +556,7 @@ const CustomerRegStepFirst = () => {
                         ) : (
                           <>
                             <img
-                              src="/assets/customer/employee/uploadIcon.svg"
+                              src={data[0].CivilWarCertificate}
                               alt="uploadIcon"
                               className="absolute inset-0 m-auto"
                               onClick={(e) => e.stopPropagation()}
@@ -586,7 +572,7 @@ const CustomerRegStepFirst = () => {
                           onChange={(e) => handleFileChange(e, "civilCode")}
                         />
                       </label>
-                      {formData.civilCode ? (
+                      {data[0].CivilWarCertificate != '' || formData.civilCode ? (
                         " "
                       ) : (
                         <span className="text-xs text-[#005F7E] absolute bottom-4">
@@ -606,12 +592,6 @@ const CustomerRegStepFirst = () => {
                       {formData.identityCard ? (
                         <button
                           className="absolute top-1 z-[999] right-[10px]"
-                          // onClick={() => {
-                          //   setFormData((prevData) => ({
-                          //     ...prevData,
-                          //     identityCard: null,
-                          //   }));
-                          // }}
                           onClick={() =>
                             handleDelete("identityCard", identityCardRef)
                           }
@@ -632,14 +612,11 @@ const CustomerRegStepFirst = () => {
                         htmlFor="Identity card (back)"
                         className="cursor-pointer"
                       >
-                        {formData.identityCard ? (
+                        
+                        {data[0].IdentitybackCertificate !== '' ? (
                           <>
                             <img
-                              // src={URL.createObjectURL(formData.identityCard)}
-                              src={
-                                getPreviewImg(formData.identityCard) ||
-                                undefined
-                              }
+                              src={ !formData.identityCard ?  getFileIconOrUrl(data[0].IdentitybackCertificate) : getPreviewImg(formData.identityCard) }
                               alt="Identity card (back)"
                               className=" object-contain   w-[200px] h-[100px]  "
                               onClick={(e) => e.stopPropagation()}
@@ -665,12 +642,12 @@ const CustomerRegStepFirst = () => {
                         />
                       </label>
 
-                      {!formData.identityCard ? (
+                      {data[0].CivilWarCertificate != '' || formData.civilCode ? (
+                        " "
+                      ) : (
                         <span className="text-xs text-[#005F7E] absolute bottom-4">
                           Хуулах
                         </span>
-                      ) : (
-                        " "
                       )}
                     </div>
                   </div>
@@ -684,12 +661,6 @@ const CustomerRegStepFirst = () => {
                       {formData.vehicleCertificate ? (
                         <button
                           className="absolute top-1 z-[999] right-[10px]"
-                          // onClick={() => {
-                          //   setFormData((prevData) => ({
-                          //     ...prevData,
-                          //     vehicleCertificate: null,
-                          //   }));
-                          // }}
                           onClick={() =>
                             handleDelete(
                               "vehicleCertificate",
@@ -713,13 +684,9 @@ const CustomerRegStepFirst = () => {
                         htmlFor="vehicleCertificate"
                         className="cursor-pointer"
                       >
-                        {formData.vehicleCertificate ? (
+                        {data[0].VehicleCertificate != ''? (
                           <img
-                            // src={URL.createObjectURL(formData.vehicleCertificate)}
-                            src={
-                              getPreviewImg(formData.vehicleCertificate) ||
-                              undefined
-                            }
+                            src={ !formData.vehicleCertificate ?  getFileIconOrUrl(data[0].VehicleCertificate) : getPreviewImg(formData.vehicleCertificate) }
                             alt="vehicleCertificate"
                             className=" object-contain  w-[200px] h-[100px]  "
                             onClick={(e) => e.stopPropagation()}
@@ -744,7 +711,7 @@ const CustomerRegStepFirst = () => {
                           }
                         />
                       </label>
-                      {formData.vehicleCertificate ? (
+                      {data[0].VehicleCertificate != '' ? (
                         ""
                       ) : (
                         <span className="text-xs text-[#005F7E] absolute bottom-4">
@@ -756,7 +723,6 @@ const CustomerRegStepFirst = () => {
                 </div>
 
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3">
-                  {/* Driving license photo (front side) */}
                   <div className="flex flex-col gap-2">
                     <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
                       <span className="text-sm text-[#424B5A]">
@@ -765,12 +731,6 @@ const CustomerRegStepFirst = () => {
                       {formData.drivingFront ? (
                         <button
                           className="absolute top-1 z-[999] right-[10px]"
-                          // onClick={() => {
-                          //   setFormData((prevData) => ({
-                          //     ...prevData,
-                          //     drivingFront: null,
-                          //   }));
-                          // }}
                           onClick={() =>
                             handleDelete("drivingFront", drivingFrontRef)
                           }
@@ -788,22 +748,20 @@ const CustomerRegStepFirst = () => {
                       style={{ position: "relative" }}
                     >
                       <label htmlFor="drivingFront" className="cursor-pointer">
-                        {formData.drivingFront ? (
+                        {data[0].SteeringWheelCertificate != ''? (
                           <img
-                            src={
-                              getPreviewImg(formData.drivingFront) || undefined
-                            }
+                            src={ !formData.drivingFront ?  getFileIconOrUrl(data[0].SteeringWheelCertificate) : getPreviewImg(formData.drivingFront) }
                             alt="drivingFront"
                             className="object-contain  w-[200px] h-[100px]  "
                             onClick={(e) => e.stopPropagation()}
                           />
                         ) : (
                           <img
-                            src="/assets/customer/employee/uploadIcon.svg"
-                            alt="uploadIcon"
-                            className="absolute inset-0 m-auto"
-                            onClick={(e) => e.stopPropagation()}
-                          />
+                          src="/assets/customer/employee/uploadIcon.svg"
+                          alt="uploadIcon"
+                          className="absolute  inset-0 m-auto"
+                          onClick={(e) => e.stopPropagation()}
+                        />
                         )}
                         <input
                           id="drivingFront"
@@ -814,7 +772,7 @@ const CustomerRegStepFirst = () => {
                           onChange={(e) => handleFileChange(e, "drivingFront")}
                         />
                       </label>
-                      {formData.drivingFront ? (
+                      {data[0].SteeringWheelCertificate != '' ? (
                         ""
                       ) : (
                         <span className="text-xs text-[#005F7E] absolute bottom-4">
@@ -824,7 +782,6 @@ const CustomerRegStepFirst = () => {
                     </div>
                   </div>
 
-                  {/* Driving license photo (back) */}
                   <div className="flex flex-col gap-2">
                     <div className=" relative flex justify-between p-2 pt-0 pb-0 ">
                       <span className="text-sm text-[#424B5A]">
@@ -834,12 +791,6 @@ const CustomerRegStepFirst = () => {
                       {formData.drivingBack ? (
                         <button
                           className="absolute top-1 z-[999] right-[10px]"
-                          // onClick={() => {
-                          //   setFormData((prevData) => ({
-                          //     ...prevData,
-                          //     drivingBack: null,
-                          //   }));
-                          // }}
                           onClick={() =>
                             handleDelete("drivingBack", drivingBackRef)
                           }
@@ -857,13 +808,11 @@ const CustomerRegStepFirst = () => {
                       style={{ position: "relative" }} // Add position relative to container
                     >
                       <label htmlFor="drivingBack" className="cursor-pointer ">
-                        {formData.drivingBack ? (
+                        {data[0].DrivingLinceseback != '' ||  formData.drivingBack ? (
                           <img
-                            src={
-                              getPreviewImg(formData.drivingBack) || undefined
-                            }
+                            src={ !formData.drivingBack  ?  getFileIconOrUrl(data[0].DrivingLinceseback) : getPreviewImg(formData.drivingBack) }
                             alt="drivingBack"
-                            className=" object-contain  w-[200px] h-[100px]  "
+                            className={`${data[0].DrivingLinceseback != '' ? 'object-contain w-[200px] h-[100px]' : " "}  `}
                             onClick={(e) => e.stopPropagation()}
                           />
                         ) : (
@@ -883,7 +832,7 @@ const CustomerRegStepFirst = () => {
                           onChange={(e) => handleFileChange(e, "drivingBack")}
                         />
                       </label>
-                      {formData.drivingBack ? (
+                      {data[0].DrivingLinceseback != ''   ? (
                         ""
                       ) : (
                         <span className="text-xs text-[#005F7E] absolute bottom-4">
@@ -906,7 +855,6 @@ const CustomerRegStepFirst = () => {
                 <Button
                   type="submit"
                   className="bg-[#005F7E] hover:bg-[#005f7eed] text-[#FFFFFF] font-bold text-[16px] leading-[20.03px] mb-4"
-                  // onClick={handleCreateCustomer}
                 >
                   Нэмэх
                 </Button>
@@ -916,19 +864,22 @@ const CustomerRegStepFirst = () => {
         </Form>
 
         <ToastContainer
-          position="top-right" // Position in the top-right corner
-          autoClose={3000} // Auto-close after 3 seconds
-          hideProgressBar={false} // Show the progress bar
-          newestOnTop={true} // Show new notifications on top
-          closeOnClick // Close on click
-          rtl={false} // Right-to-left or left-to-right
-          pauseOnFocusLoss // Pause when the window loses focus
-          draggable // Allow the toast to be dragged
-          pauseOnHover // Pause when hovering over the toast
+          position="top-right" 
+          autoClose={3000} 
+          hideProgressBar={false} 
+          newestOnTop={true} 
+          closeOnClick 
+          rtl={false} 
+          pauseOnFocusLoss
+          draggable 
+          pauseOnHover 
         />
       </div>
+    </>) : " "}
+
+     
     </>
   );
 };
 
-export default CustomerRegStepFirst;
+export default CustomerAndEmployeeEdit;

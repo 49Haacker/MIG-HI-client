@@ -82,11 +82,11 @@ const EmployeeRegistration = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
+      
     const combinedValue = {
       LastName: values.lastName.toUpperCase(),
       Name: values.name.toUpperCase(),
-      RegisterNumber: selectedLater1 + selectedLater2 + values.registerNumber.replace(/\D/g, '').slice(0, 8),
+      RegisterNumber: selectedLater1 + selectedLater2 + values.registerNumber.toUpperCase(),
       PhoneNo: values.phoneNumber,
     };
 

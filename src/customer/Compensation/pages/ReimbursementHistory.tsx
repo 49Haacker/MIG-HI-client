@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "@/axios"
+import {useReimbursementContext} from "@/customer/Context/ReimbursementData"
 
 import {
   Select,
@@ -15,9 +16,11 @@ import FullPageLoader from "@/components/ui/FullPageLoader";
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
 
+
 interface EmployeeData {
+  [x: string]: any;
   firstName: string;
-  productName: string;
+  ProductName: string;
   registerNo: string;
   country: string;
   city: string;
@@ -25,24 +28,35 @@ interface EmployeeData {
   endDate: string;
   invoiceAmount: string;
   statusName: string;
+  BeginDate: string;
+  EndDate: string;
+  Rate: string;
 }
 
 const ReimbursementHistory = () => {
+  const  {updateData} = useReimbursementContext();
   const [reimbursementData, setReimbursementData] = React.useState<
     EmployeeData[]
   >([]);
-  const [selectedType, setSelectedType] = React.useState<string | null>(null);
+  const [selectedType, setSelectedType] = React.useState<string | null>('бүгдийг харуулах');
+  const [finallReimbursementdetailsData, setFinalReimbursementdetailsData] = React.useState<EmployeeData[]>([]);
+  const [all,setAll] = React.useState<EmployeeData[]>([]);
   const navigate = useNavigate();
   const [registerNumber , setRegisterNumber] = React.useState<string | null>('');
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
+  const [formValues, setFormValues] = React.useState({
+    Rate: '',
+    EndDate: '',
+    BeginDate: '',
+    ProductName: ''
+  });
   
   React.useEffect(() => {
     setLoading(true); 
     axios.get('current-customer')
       .then((response) => {
         setRegisterNumber(response.data.customer.RegisterNo);
-        setLoading(false);
         console.info(error);
       })
       .catch((error) => {
@@ -52,28 +66,85 @@ const ReimbursementHistory = () => {
   }, []); 
 
   React.useEffect(() => {
-    setLoading(true); 
     if (registerNumber) {
-      axios.get(`Quits/List?SearchTypeId=2&SearchValue=${registerNumber}`)
+      axios.get(`Quits/List?SearchTypeId=3&SearchValue=${registerNumber}`)
         .then((res) => {
-          console.log(res.data);
-          setReimbursementData(res.data.quitsLists);
-    setLoading(false); 
-
+          console.log(res.data.quitsLists[0]);
+          setReimbursementData(res.data.quitsLists[0]);
+          setFinalReimbursementdetailsData(res.data.quitsLists[0]);
+          setAll(res.data.quitsLists[1]);
+           setLoading(false); 
         })
         .catch((error) => {
           console.error("Error fetching quits list:", error);
            setLoading(false); 
-
         });
     }
   }, [registerNumber]);
+
+  
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+  };
+
+  const handleMoreData = (reimbursement: any | EmployeeData) => {
+    updateData([reimbursement,all]);
+  navigate('/compensation/reimbursement-details', {
+    state: { reimbursement ,all }, // Correct data structure for state
+  });
+
+  };
+
+
+  React.useEffect(() => {
+    const isEmptySearch = Object.values(formValues).every(value => value === '');
+    if (!isEmptySearch) {
+      let filteredData = finallReimbursementdetailsData;
+  
+      // Filter by Rate
+      if (formValues.Rate !== '') {
+        filteredData = filteredData.filter((item) => String(item.rate).includes(String(formValues.Rate)));
+      }
+  
+      // Filter by EndDate
+      if (formValues.EndDate !== '') {
+        filteredData = filteredData.filter((item) => item.endDate.includes(formValues.EndDate));
+      }
+  
+      // Filter by BeginDate
+      if (formValues.BeginDate !== '') {
+        filteredData = filteredData.filter((item) => item.beginDate.includes(formValues.BeginDate));
+      }
+  
+      // Filter by ProductName
+      if (formValues.ProductName.length > 0) {
+        filteredData = filteredData.filter((item) => {
+          const fieldValue = item.productName.toLowerCase();
+          const searchTerm = formValues.ProductName.toLowerCase();
+          return fieldValue.includes(searchTerm);
+        });
+      }
+  
+      console.log(filteredData);
+      setReimbursementData(filteredData); 
+    } else {
+      setReimbursementData(finallReimbursementdetailsData);
+    }
+  }, [formValues]);
+  
+
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);
   };
 
-  const filteredData = selectedType
+
+
+  const filteredData = selectedType && selectedType !== 'бүгдийг харуулах'
     ? reimbursementData.filter(
         (reimbursement) => reimbursement.statusName === selectedType
       )
@@ -81,10 +152,9 @@ const ReimbursementHistory = () => {
 
   return (
     <>
-      <FullPageLoader isLoading={loading} />
 
       {/* pending this table only  */}
-      {reimbursementData.length > 0 ? (
+      {!reimbursementData ? (
         <div className="flex flex-col justify-center items-center w-full">
           <img
             src="/assets/customer/employee/emptyClaimHistory.svg"
@@ -97,6 +167,8 @@ const ReimbursementHistory = () => {
         </div>
       ) : (
         <div className="flex flex-col w-full overflow-x-scroll lg:overflow-hidden">
+      <FullPageLoader isLoading={loading} />
+
           <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
             <div className="grid grid-cols-8 sm:grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
               {/* Product name */}
@@ -107,7 +179,14 @@ const ReimbursementHistory = () => {
                 >
                   Бүтээгдэхүүний нэр
                 </label>
-                <Input />
+                <Input
+              id="ProductName"
+              name="ProductName"
+              value={formValues.ProductName}
+              onChange={handleInputChange}
+              className="border border-gray-300 rounded p-2"
+              type="text"
+            />
               </div>
 
               {/* Start date */}
@@ -118,7 +197,14 @@ const ReimbursementHistory = () => {
                 >
                   Эхлэх огноо
                 </label>
-                <Input />
+                {/* <Input /> */}
+                <Input
+              id="BeginDate"
+              name="BeginDate"
+              value={formValues.BeginDate}
+              onChange={handleInputChange}
+              type="text"
+            />
               </div>
 
               {/* End date */}
@@ -129,7 +215,13 @@ const ReimbursementHistory = () => {
                 >
                   Дуусах огноо
                 </label>
-                <Input />
+                <Input
+              id="EndDate"
+              name="EndDate"
+              value={formValues.EndDate}
+              onChange={handleInputChange}
+              type="text"
+            />
               </div>
 
               {/* Overall rating */}
@@ -140,7 +232,13 @@ const ReimbursementHistory = () => {
                 >
                   Нийт үнэлгээ
                 </label>
-                <Input />
+                <Input
+              id="Rate"
+              name="Rate"
+              value={formValues.Rate}
+              onChange={handleInputChange}
+              type="text"
+            />
               </div>
 
               {/* Type */}
@@ -152,23 +250,65 @@ const ReimbursementHistory = () => {
                   Төрөл
                 </label>
                 <Select onValueChange={handleTypeChange}>
-                  <SelectTrigger>
+                  <SelectTrigger className="flex items-end justify-center w-fit gap-2">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
+                    {/* Илгээсэн
+                    Тооцоолж буй
+                    Хянаж буй
+                    Санхүү
+                    Олгосон or Олгоогүй
+                    Материал илгээсэн
+                    Санхүү
+                    Материал илгээсэн
+                    бүгдийг харуулах
+                    
+                    */}
                       <SelectItem
-                        value="Идэвхитэй"
+                        value="Илгээсэн"
                         className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
                       >
-                        Идэвхитэй
+                        Илгээсэн
                       </SelectItem>
                       <SelectItem
-                        value="Идэвхигүй"
+                        value="Тооцоолж буй"
                         className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
                       >
-                        Идэвхигүй
+                        Тооцоолж буй
                       </SelectItem>
+                      <SelectItem
+                        value="Хянаж буй"
+                        className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
+                      >
+                        Хянаж буй
+                      </SelectItem>
+                      <SelectItem
+                        value="Санхүү"
+                        className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
+                      >
+                        Санхүү
+                      </SelectItem>
+                      <SelectItem
+                        value="Олгосон or Олгоогүй"
+                        className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
+                      >
+                        Олгосон or Олгоогүй
+                      </SelectItem>
+                      <SelectItem
+                        value="Материал илгээсэн"
+                        className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
+                      >
+                        Материал илгээсэн
+                      </SelectItem>
+                      <SelectItem
+                        value="бүгдийг харуулах"
+                        className="text-[#424B5A] font-normal text-[14px] leading-[14px]"
+                      >
+                       бүгдийг харуулах
+                      </SelectItem>
+
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -182,7 +322,7 @@ const ReimbursementHistory = () => {
               </div>
             </div>
 
-            <div className="flex flex-col w-full gap-2 h-[45vh] overflow-y-auto custom-scroller-design">
+            <div className="flex flex-col w-full gap-2  overflow-y-auto custom-scroller-design" style={{height:'calc(100vh - 354px)'}}>
               {filteredData.map((reimbursement, index) => (
                 <div
                   key={index}
@@ -202,19 +342,25 @@ const ReimbursementHistory = () => {
                     {reimbursement.endDate}
                   </span>
                   <span className="text-[#424B5A] font-normal text-[14px] leading-[14px]">
-                    {reimbursement.invoiceAmount}
+                    {reimbursement.rate}
                   </span>
 
                   <div className=" w-full min-[1024px]:col-span-2">
                     <Button
                       className={`rounded-full h-[24px] ${
-                        reimbursement.statusName === "Хүлээн авсан"
+                        reimbursement.statusName === "Илгээсэн"
                           ? "bg-[#E6EFF2] hover:bg-[#E6EFF3] text-[#005F7E]"
-                          : reimbursement.statusName === "Хянаж байгаа"
+                          : reimbursement.statusName === "Тооцоолж буй"
                           ? "bg-[#F4926829] hover:bg-[#F4926829] text-[#F49268]"
-                          : reimbursement.statusName === "Төлбөр хийгдэж байгаа"
+                          : reimbursement.statusName === "Хянаж буй"
                           ? "bg-[#AED03829] hover:bg-[#AED03829] text-[#AED038]"
-                          : reimbursement.statusName === "Төлөгдсөн"
+                          : reimbursement.statusName === "Олгосон or"
+                          ? "bg-[#00A27B29] hover:bg-[#00A27B29] text-[#00A27B]"
+                          : reimbursement.statusName === "Олгоогүй"
+                          ? "bg-[#E6EFF2] hover:bg-[#00A27B29] text-[#E6EFF2]"
+                          : reimbursement.statusName === "Санхүү"
+                          ? "bg-[#F4926829] hover:bg-[#F4926829] text-[#F49268]"
+                          : reimbursement.statusName === "Материал илгээсэн"
                           ? "bg-[#00A27B29] hover:bg-[#00A27B29] text-[#00A27B]"
                           : ""
                       }`}
@@ -227,7 +373,7 @@ const ReimbursementHistory = () => {
                   <span
                     className="text-[#005F7E] underline underline-offset-4 text-[14px] leading-[14px] font-medium cursor-pointer"
                     onClick={() =>
-                      navigate("/compensation/reimbursement-details")
+                      handleMoreData(reimbursement)
                     }
                   >
                     Дэлгэрэнгүй

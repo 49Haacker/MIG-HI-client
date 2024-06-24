@@ -1,10 +1,60 @@
 import { Button } from "@/components/ui/button";
+import { useReimbursementContext } from '../../Context/ReimbursementData';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "@/axios";
+
+interface ReimbursementDataType {
+  productDiscription: any;
+  lastName?: string;
+  firstName?: string;
+  registerNo?: string;
+  productName?: string;
+  statusName?: string;
+  rate?: string;
+  invoiceAmount?: string;
+}
+
 
 const ReimbursementDetails = () => {
+  const [ReimbursementData , setReimbursementData] = React.useState<ReimbursementDataType | null>(null);
+  const [image , setImages] = React.useState(null);
+  const navigate = useNavigate();
+  const { data } = useReimbursementContext();
+
+  useEffect(() => {
+    console.log(data);
+    if (data && data.length === 0) {
+      navigate('/compensation/reimbursement-history');
+    } else if (data) {
+      setReimbursementData(data[0]); 
+
+      axios.get('getClaimImg', { params: { sendClaimId: data[0].id } })
+      .then((res) => {
+        setImages(res.data.image);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      })
+      .finally(() => {
+        // This block executes after either .then() or .catch()
+        // You can add cleanup code or actions that need to be executed regardless of success or failure
+      });
+    
+    }
+  }, [data, navigate]); 
+  
+
+
+
+
+  
   return (
     <>
-      <div className="flex flex-col items-start gap-4 w-full">
-        <div className="flex items-start gap-12 w-full">
+      {ReimbursementData ? (<>
+      
+        <div className="flex flex-col items-start gap-4 w-full">
+        <div className="flex flex-col md:flex-row items-start gap-12 w-full">
           <div className="flex items-start gap-4">
             <div className="flex flex-col gap-5 bg-[#E8EEEF] h-[443px] px-6 py-8 rounded-md whitespace-nowrap">
               <span className="text-[#005F7E] font-semibold text-[14px] leading-[14px]">
@@ -34,106 +84,101 @@ const ReimbursementDetails = () => {
               </span>
             </div>
 
-            <div className="flex flex-col gap-5 px-6 py-8 rounded-md">
+            <div className="flex  flex-col gap-5 px-6 py-8 rounded-md">
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                Цогтбаатар
+                {data[1].LastName ? data[1].LastName : 'N/A' }
+              </span>
+              <span className="text-[#424B5A] font-medium text-[14px] leading-[14px] truncate hover:whitespace-normal hover:overflow-visible w-[170px]">
+              {data[1].FirstName ? data[1].FirstName : 'N/A' }
+
+
               </span>
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                Энхжавхлан
+              {ReimbursementData.registerNo ? ReimbursementData.registerNo : 'N/A' }
+
               </span>
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                AA00000000
-              </span>
-              <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                Эрүүл мэндийн даатгал
+              {ReimbursementData.productName ? ReimbursementData.productName : 'N/A' }
+
               </span>
 
               <div className=" w-full">
-                <Button className="bg-[#E6EFF2] hover:bg-[#E6EFF3] text-[#005F7E] rounded-full h-[24px] w-[83px]">
-                  Хүлээн авсан
+                <Button className="bg-[#E6EFF2] hover:bg-[#E6EFF3] text-[#005F7E] rounded-full h-[24px] w-fit">
+                {ReimbursementData.statusName ? ReimbursementData.statusName : 'N/A' }
                 </Button>
               </div>
 
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                30,000,000
+              {ReimbursementData.rate ? ReimbursementData.rate : 'N/A' }
+
               </span>
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                5,000,000
+              {ReimbursementData.invoiceAmount ? ReimbursementData.invoiceAmount : 'N/A' }
+
               </span>
               <span className="text-[#424B5A] font-medium text-[14px] leading-[14px]">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
+               {ReimbursementData.productDiscription ? ReimbursementData.productDiscription : 'N/A' }
               </span>
             </div>
           </div>
 
-          <div className="flex gap-8 w-full">
-            <div className="flex flex-col gap-4 w-full">
-              <div>
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
-                  1. Нөхөн төлбөрийн маягт
-                </h1>
-                <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
-                  <img
-                    src="/assets/customer/reimbursementDetails/firstDocumnet.svg"
-                    alt="firstDocumnet.svg"
-                  />
-                </div>
-              </div>
+          <div className="flex gap-[100] w-full">
 
-              <div>
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
-                  3. Эмчийн онош, шинжилгээ, дүгнэлт
-                </h1>
-                <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
-                  <img
-                    src="/assets/customer/reimbursementDetails/thirdDocumnet.svg"
-                    alt="thirdDocumnet"
-                  />
-                </div>
-              </div>
+          {image ? (
+                  <div className="flex flex-col ml-0 lg:ml-[3%] gap-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 ">
+                    {image.map((item: { quitsType: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; f3: string | undefined; }, index: React.Key | null | undefined) => (
+                      <div key={index}>
+                        <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
+                          {item.quitsType ? (
+                            <span>{item.quitsType}</span>
+                          ) : (
+                            null // or replace with an empty string "" if you prefer
+                          )}
+                        </h1>
+                        <div className="  w-[230px] px-[12px] flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
+                          <img
+                            src={item.f3}
+                            alt="document"
+                            className="w-[200px]"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  null // or replace with an empty string "" if you prefer
+                )}
 
-              <div>
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
-                  5. Бусад /Эмийн жор, жорын дагуух худалдан авалтууд/
-                </h1>
-                <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
-                  <img
-                    src="/assets/customer/reimbursementDetails/fifthDocumnet.svg"
-                    alt="fifthDocumnet"
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="flex flex-col gap-4 w-full">
-              <div>
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
-                  2. Нөхөн төлбөр хүсэх хуудас
-                </h1>
-                <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
-                  <img
-                    src="/assets/customer/reimbursementDetails/secondDocumnet.svg"
-                    alt="secondDocumnet"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[18.03px]">
-                  4. Төлбөр төлсөн и-баримтууд
-                </h1>
-                <div className="flex justify-center items-center p-3 rounded-lg bg-[#E6EFF2]">
-                  <img
-                    src="/assets/customer/reimbursementDetails/fourthDocumnet.svg"
-                    alt="fourthDocumnet"
-                  />
-                </div>
-              </div>
-            </div>
+        
           </div>
         </div>
       </div>
+      
+      
+      
+      </>) : (<>
+      
+      
+        <div className="flex flex-col justify-center items-center w-full">
+          <img
+            src="/assets/customer/employee/emptyClaimHistory.svg"
+            alt="emptyClaimHistory"
+          />
+
+          <span className="text-[#424B5A] text-sm font-normal leading-3">
+            Танд одоогоор үүсгэсэн нөхөн төлбөрийн хүсэлт байхгүй байна.
+          </span>
+        </div>
+      
+      
+      
+      
+      
+      </>)}
+
+
+    
     </>
   );
 };

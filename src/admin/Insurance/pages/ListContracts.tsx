@@ -13,7 +13,7 @@ import {
 
 import FullPageLoader from "@/components/ui/FullPageLoader";
 
-// import listOfContactDataJson from "../../../../json/adminListOfContactData.json";
+//  import listOfContactDataJson from "../../../../json/adminListOfContactData.json";
 
 import "@/shared-css/CustomScroller.css";
 import { useNavigate } from "react-router-dom";
@@ -30,22 +30,32 @@ interface ListOfContactData {
 
 const ListContracts = () => {
   const [loading, setLoading] = React.useState(false);
-  const [listOfContactData, setListOfContactData] = React.useState<
-    ListOfContactData[]
-  >([]);
+  const [listOfContactData, setListOfContactData] = React.useState<ListOfContactData[]>([]);
+  const [RegisterNo , setRegisterNo] = React.useState(null);
 
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
-  const RegisterNo = "ОЙ99013005";
-
-  // if api come then in useEffect make a function and call that api and out of function call that function
   React.useEffect(() => {
+    setLoading(true); 
+    axios.get('current-admin')
+      .then((response) => {
+        setRegisterNo(response.data.customer.RegisterNo);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []); 
+
+  React.useEffect(() => {
+    
     setLoading(true);
     axios
-      .get(`Guarantee/List?RegisterNo=${RegisterNo}`)
+      .get(`Guarantee/List`)
       .then((res) => {
+        if(res.data == ''){
         setListOfContactData(res.data);
+        }
       })
       .catch(() => {
         setLoading(false);
@@ -53,7 +63,7 @@ const ListContracts = () => {
       .then(() => {
         setLoading(false);
       });
-  }, []);
+  }, [RegisterNo]);
 
   const handleTypeChange = (value: string) => {
     setSelectedType(value);
@@ -68,7 +78,9 @@ const ListContracts = () => {
 
   return (
     <>
-      <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
+
+      {listOfContactData.length < 0 ? (<>
+        <div className="flex flex-col lg:w-full lg:overflow-hidden overflow-x-scroll w-[58em]">
         <FullPageLoader isLoading={loading} />
         <div className="flex gap-8 flex-col items-center w-full min-w-max lg:min-w-0">
           <div className="grid grid-cols-6 max-[1023px]:grid-cols-8 min-[1224px]:grid-cols-8 gap-2 px-3 py-4 h-auto bg-[#E6EFF2] rounded-md w-full whitespace-nowrap">
@@ -202,6 +214,21 @@ const ListContracts = () => {
           </div>
         </div>
       </div>
+      </>) : (<>
+        <div className="flex flex-col justify-center items-center w-full " style={{height:'calc(100vh - 278px)'}}>
+          <img
+            src="/assets/customer/employee/emptyClaimHistory.svg"
+            alt="emptyClaimHistory"
+          />
+
+          <span className="text-[#424B5A] text-sm font-normal leading-3">
+            Танд одоогоор үүсгэсэн нөхөн төлбөрийн хүсэлт байхгүй байна.
+          </span>
+        </div>
+      </>
+    )}
+
+     
     </>
   );
 };

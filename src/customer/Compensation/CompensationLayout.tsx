@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { ReimbursementProvider } from '../Context/ReimbursementData';  
+
   import { HiOutlineMenuAlt3 } from "react-icons/hi";
   import "@/shared-css/CustomScroller.css";
 import React from "react";
@@ -161,7 +163,9 @@ const CompensationLayout = () => {
         </div>
         {/* body div */}
         <div className="flex bg-[#FFFFFF] px-6 py-9 w-full  overflow-y-scroll custom-scroller-design" style={{ height:'calc(100vh - 158px)' }}>
+          <ReimbursementProvider>
           <Outlet />
+          </ReimbursementProvider>
         </div>
       </div>
     </>

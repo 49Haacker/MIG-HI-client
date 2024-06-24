@@ -1,7 +1,7 @@
   import { Button } from "@/components/ui/button";
   import { Input } from "@/components/ui/input";
   import { useUserContext } from '@/admin/Context/UserData';
-
+  import { FiEdit } from "react-icons/fi";
 
   import axios  from "@/axios";
   import { AxiosResponse }   from "axios";
@@ -60,12 +60,12 @@
       RegisterNumber: "",
       PhoneNo: "",
     });
+
+    const editProfile = (list: UserDetails) => {
+      updateData([list]);
+      navigate("/admin/registration/admin-customer-edit");
+    }
   
-
-
-
-
-
     const fetchAdmins = async (filters: Filters): Promise<void> => {
       try {
         // Construct query parameters from the filters object
@@ -225,7 +225,7 @@
               </div>
             </div>
 
-            <div className="flex flex-col w-full gap-2 h-[45vh] overflow-y-auto custom-scroller-design">
+            <div className="flex flex-col w-full gap-2  overflow-y-auto custom-scroller-design" style={{height:'calc(100vh - 366px)'}}>
               {filteredData.map((list, index) => (
                 <div
                   key={index}
@@ -261,6 +261,17 @@
                   >
                     Дэлгэрэнгүй
                   </span>
+                  {list.UserTypeText == 'User' ? (<>
+                  
+                    <span
+                    className="text-[#005F7E] underline underline-offset-4 text-[14px] leading-[14px] font-medium cursor-pointer"
+                    onClick={() => editProfile(list)}
+                  >
+                   <FiEdit className="text-green-500" />
+                  </span>
+                  
+                  </>) : ""}
+                 
                 </div>
               ))}
             </div>

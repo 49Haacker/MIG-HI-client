@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import { ToastContainer, toast } from 'react-toastify';
 import Box from '@mui/material/Box';
+import Countdown from 'react-countdown';
 import axios from '@/axios'
 
 import {
@@ -19,12 +20,17 @@ import {
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState<string | null>("");
+  const [showCountdown, setShowCountdown] = useState(false);
   const [loading , setLoading] = useState(false);
   const location = useLocation();
   const phoneNumber = location.state.phoneNumber;
 
   const [error, setError] = useState<string>("");
   const dispatch = useDispatch();
+
+  useEffect(()=>{
+    setShowCountdown(true);
+  },[]);
 
   useEffect(() => {
     if (localStorage.getItem("otp")) {
@@ -86,11 +92,15 @@ const VerifyOtp = () => {
     }
   };
 
-
+  const handleCountdownComplete = () => {
+    setShowCountdown(false); // Hide the countdown after completion
+  };
   
   const redeemCode = async (phoneNumber:any) =>{
     setLoading(true);
-      axios.post('customer-login', {
+    setShowCountdown(true);
+
+      axios.post('resendOtp', {
         phoneNo:phoneNumber
       }).then((res)=>{
 
@@ -98,10 +108,12 @@ const VerifyOtp = () => {
           toast.success("Otp Sent Successfully !");
         }
 
-      }).catch(()=>{
-          toast.error("Please Try Again !!");
+      }).catch((error)=>{
+          toast.error(error.response.data.message);
       }).then(()=>{
         setLoading(false);
+        
+
       });
 
   }
@@ -137,10 +149,39 @@ const VerifyOtp = () => {
 
         {/* Redeem the code */}
         <div className="w-full text-right">
-          <span className="text-[#005F7E] font-normal underline underline-offset-2 text-[12px] leading-[14.88px]" onClick={()=>redeemCode(phoneNumber)}>
-            Код дахин авах
-          </span>
-        </div>
+      {showCountdown ? ( <>
+            {!loading ? (<>
+            
+                      <Countdown
+                  date={Date.now() + 120000} // 120000 milliseconds = 2 minutes
+                  renderer={({ minutes, seconds, completed }) =>
+                    completed ? (
+                      <span
+                        onClick={() => redeemCode(phoneNumber)}
+                        className="text-[#005F7E] font-normal underline underline-offset-2 text-[12px] leading-[14.88px]"
+                      >
+                        Код дахин авах
+                      </span>
+                    ) : (
+                      <span className="text-[#005F7E] font-normal text-[12px] leading-[14.88px]">
+                        {`цагаас хойш нэг удаа дахин илгээнэ үү (${minutes}:${seconds < 10 ? '0' : ''}${seconds}) `}
+                      </span>
+                    )
+                  }
+                  onComplete={handleCountdownComplete}
+                />
+            </>) : " "}
+
+        </>
+      ) : (
+        <span
+          onClick={() => redeemCode(phoneNumber)}
+          className="text-[#005F7E] font-normal underline underline-offset-2 text-[12px] leading-[14.88px]"
+        >
+          Код дахин авах
+        </span>
+      )}
+    </div>
 
         <div className="flex items-center w-full mt-4">
           <Button

@@ -8,6 +8,8 @@ import FullPageLoader from '@/components/ui/FullPageLoader';
 import { FaTrashAlt } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import pdfIcon from '@/assets/eclaim/pdf.png';
+import wordIcon from '@/assets/eclaim/word.png';
 interface CustomerData {
   id: number;
   FirstName: string;
@@ -80,6 +82,47 @@ const Profile = () => {
       });
     }
   };
+
+  const getPreviewImg = (file: File | null) => {
+    if (file) {
+      const fileType = file.type;
+
+      if (fileType.startsWith("image/")) {
+        return URL.createObjectURL(file);
+      } else if (fileType === "application/pdf") {
+        return pdfIcon; // Assuming pdfIcon is a valid URL or imported image
+      } else if (
+        fileType === "application/msword" ||
+        fileType ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        return wordIcon; // Assuming wordIcon is a valid URL or imported image
+      } else {
+        return null; // Return null for unsupported file types
+      }
+    }
+
+    return null; // Return null if file is null or undefined
+  };
+
+  const getFileIconOrUrl = (url: string | undefined | null): string => {
+    if (!url) {
+      return "/assets/customer/employee/uploadIconSm.svg"; // Default icon if URL is undefined or null
+    }
+  
+    const lowerCaseUrl = url.toLowerCase();
+    
+    if (lowerCaseUrl.endsWith('.pdf')) {
+      return pdfIcon // Replace with actual path to your PDF icon
+    } else if (lowerCaseUrl.endsWith('.doc') || lowerCaseUrl.endsWith('.docx')) {
+      return wordIcon; // Replace with actual path to your Word document icon
+    } else if (lowerCaseUrl.endsWith('.jpg') || lowerCaseUrl.endsWith('.jpeg') || lowerCaseUrl.endsWith('.png') || lowerCaseUrl.endsWith('.gif')) {
+      return url; // Return the image URL directly
+    }
+  
+    return "/assets/customer/employee/uploadIconSm.svg"; // Default icon if file type is not recognized
+  };
+  
 
   const handleEditProfile = async () => {
     // setLoading(true);
@@ -156,7 +199,7 @@ const Profile = () => {
               <div className="flex gap-4 w-full">
 
               
-              {customerData.IsForigner !== null && customerData.IsForigner === false  ? (
+              {customerData.IsForigner !== null && customerData.IsForigner == false  ? (
                 <>
                   <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
                     {customerData.RegisterNo.slice(0, 1)}
@@ -164,7 +207,7 @@ const Profile = () => {
                   <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start">
                     {customerData.RegisterNo.slice(1, 2)}
                   </Button>
-                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start w-full">
+                  <Button className="bg-[#4D8FA5] hover:bg-[#4d8fa5ed] text-[#FFFFFF] text-[14px] leading-[14px] flex justify-start w-fit px-5">
                     {customerData.RegisterNo.slice(2)}
                   </Button>
                 </>
@@ -226,10 +269,8 @@ const Profile = () => {
                     <img
                       src={
                         imageFiles.identityFront
-                          ? URL.createObjectURL(imageFiles.identityFront)
-                          : customerData?.CivilWarCertificate ||
-                            "/assets/customer/employee/uploadIconSm.svg"
-                          
+                          ? getPreviewImg(imageFiles.identityFront) || undefined
+                          : ( getFileIconOrUrl(customerData?.CivilWarCertificate) || "/assets/customer/employee/uploadIconSm.svg")
                       }
                       onClick={() => !imageFiles.identityFront && document.getElementById('civilCertificateFrontInput')?.click()} 
                       alt="identityFront"
@@ -284,12 +325,11 @@ const Profile = () => {
                   )}
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
-                    <img
+                    <img              
                       src={
                         imageFiles.identityBack
-                          ? URL.createObjectURL(imageFiles.identityBack)
-                          : customerData?.IdentitybackCertificate ||
-                            "/assets/customer/employee/uploadIconSm.svg"
+                          ? getPreviewImg(imageFiles.identityBack) || undefined
+                          : (getFileIconOrUrl(customerData?.IdentitybackCertificate) || "/assets/customer/employee/uploadIconSm.svg")
                       }
                       onClick={() => !imageFiles.identityBack && document.getElementById('civilCertificateBackInput')?.click()}
 
@@ -301,7 +341,7 @@ const Profile = () => {
                     <input
                       id="civilCertificateBackInput"
                       type="file"
-                      accept="image/*"
+                      
                       style={{ display: "none" }}
                       onChange={(e) =>
                         handleImageChange(
@@ -334,9 +374,8 @@ const Profile = () => {
                     <img
                       src={
                         imageFiles.drivingFront
-                          ? URL.createObjectURL(imageFiles.drivingFront)
-                          : customerData?.SteeringWheelCertificate ||
-                            "/assets/customer/employee/uploadIconSm.svg"
+                          ? getPreviewImg(imageFiles.drivingFront) || undefined
+                          : (getFileIconOrUrl(customerData?.SteeringWheelCertificate) || "/assets/customer/employee/uploadIconSm.svg")
                       }
                       onClick={() => !imageFiles.drivingFront && document.getElementById('drivingFrontInput')?.click()} 
 
@@ -348,7 +387,7 @@ const Profile = () => {
                     <input
                       id="drivingFrontInput"
                       type="file"
-                      accept="image/*"
+                      
                       style={{ display: "none" }}
                       onChange={(e) =>
                         handleImageChange(
@@ -377,11 +416,16 @@ const Profile = () => {
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
+                      // src={
+                      //   imageFiles.drivingBack
+                      //     ? URL.createObjectURL(imageFiles.drivingBack)
+                      //     : customerData?.DrivingLinceseback ||
+                      //       "/assets/customer/employee/uploadIconSm.svg"
+                      // }
                       src={
                         imageFiles.drivingBack
-                          ? URL.createObjectURL(imageFiles.drivingBack)
-                          : customerData?.DrivingLinceseback ||
-                            "/assets/customer/employee/uploadIconSm.svg"
+                          ? getPreviewImg(imageFiles.drivingBack) || undefined
+                          : (getFileIconOrUrl(customerData?.DrivingLinceseback) || "/assets/customer/employee/uploadIconSm.svg")
                       }
                       alt="identityFront"
                       className="overflow-hidden h-[120px]"
@@ -394,7 +438,7 @@ const Profile = () => {
                     <input
                       id="drivingBackInput"
                       type="file"
-                      accept="image/*"
+                      
                       style={{ display: "none" }}
                       onChange={(e) =>
                         handleImageChange(
@@ -425,12 +469,17 @@ const Profile = () => {
                 <div className="bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
                   <div className="relative flex justify-center items-center">
                     <img
+                      // src={
+                      //   imageFiles.vehicleCertificate
+                      //     ? URL.createObjectURL(imageFiles.vehicleCertificate)
+                      //     : customerData?.VehicleCertificate ||
+                      //       "/assets/customer/employee/uploadIconSm.svg"
+                            
+                      // }
                       src={
                         imageFiles.vehicleCertificate
-                          ? URL.createObjectURL(imageFiles.vehicleCertificate)
-                          : customerData?.VehicleCertificate ||
-                            "/assets/customer/employee/uploadIconSm.svg"
-                            
+                          ? getPreviewImg(imageFiles.vehicleCertificate) || undefined
+                          : (getFileIconOrUrl(customerData?.VehicleCertificate) || "/assets/customer/employee/uploadIconSm.svg")
                       }
                       onClick={() => !imageFiles.vehicleCertificate && document.getElementById('vehicleInput')?.click()} 
 
@@ -442,7 +491,7 @@ const Profile = () => {
                     <input
                       id="vehicleInput"
                       type="file"
-                      accept="image/*"
+                      
                       style={{ display: "none" }}
                       onChange={(e) =>
                         handleImageChange(
@@ -463,27 +512,6 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Excel data entry */}
-              {/* <div className="flex flex-col gap-2">
-                <h1 className="text-[#424B5A] font-normal text-[14px] leading-[17.36px]">
-                  Excel мэдээлэл оруулах
-                </h1>
-                <div className="flex items-center justify-center relative bg-[#E6EFF2] p-2 rounded-lg w-[199px] h-[137px]">
-                  <div className="flex flex-col justify-center items-center">
-                    <img
-                      src="/assets/customer/profile/excelDataEntry.svg"
-                      alt="excelDataEntry"
-                    />
-
-                    <h1>excel.xlsx</h1>
-                  </div>
-                  <img
-                    src="/assets/customer/profile/editIcon.svg"
-                    alt="editIcon"
-                    className="absolute right-2 top-2"
-                  />
-                </div>
-              </div> */}
             </div>
 
             <div className="flex justify-end w-full">
@@ -493,7 +521,7 @@ const Profile = () => {
               >
                 Хадгалах
               </Button>
-              {/* Save */}
+              
             </div>
           </div>
           
@@ -502,15 +530,15 @@ const Profile = () => {
       )
       }
         <ToastContainer
-          position="top-right" // Position in the top-right corner
-          autoClose={3000} // Auto-close after 3 seconds
-          hideProgressBar={false} // Show the progress bar
-          newestOnTop={true} // Show new notifications on top
-          closeOnClick // Close on click
-          rtl={false} // Right-to-left or left-to-right
-          pauseOnFocusLoss // Pause when the window loses focus
-          draggable // Allow the toast to be dragged
-          pauseOnHover // Pause when hovering over the toast
+          position="top-right"
+          autoClose={3000} 
+          hideProgressBar={false} 
+          newestOnTop={true} 
+          closeOnClick 
+          rtl={false} 
+          pauseOnFocusLoss 
+          draggable 
+          pauseOnHover 
         />
     </>
   );

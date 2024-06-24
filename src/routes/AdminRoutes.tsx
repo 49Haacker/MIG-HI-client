@@ -24,6 +24,7 @@ import {
 
 import ProfileLayout from "@/admin/Profile/ProfileLayout";
 import { Profile } from "@/admin/Profile/pages";
+import CustomerAndEmployeeEdit from "@/admin/registration/pages/CustomerAndEmployeeEdit";
 
 const AdminRoutes = () => {
   return (
@@ -56,6 +57,9 @@ const AdminRoutes = () => {
               path="admin-customer-details"
               element={<AdminCustomerDetails />}
             />
+            <Route
+            path="admin-customer-edit"
+            element={<CustomerAndEmployeeEdit />}></Route>
             <Route path="manager-details" element={<ManagerDetails />} />
           </Route>
 

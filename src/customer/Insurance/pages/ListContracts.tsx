@@ -237,7 +237,7 @@ const ListContracts = () => {
                 Төрөл   {/* Type */}
               </label>
               <Select onValueChange={handleTypeChange} >
-                <SelectTrigger className="flex items-center justify-between">
+                <SelectTrigger className="flex items-center justify-between w-fit">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent >
